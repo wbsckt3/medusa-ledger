@@ -1,3 +1,5 @@
+<img width="223" height="207" alt="medusa-logo" src="https://github.com/user-attachments/assets/3942361c-bf29-425c-bc10-7911f7ca0b37" />
+
 # Medusa Ledger
 
 **Open Source Trust Ledger for Business**
