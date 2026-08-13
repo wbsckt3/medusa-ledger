@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "title": "Medusa Ledger — Open Source Trust Ledger for Business",
+    "description": "Open source business trust ledger for verifiable financial and operational events. SHA-256, append-only, Docker quick start."
+  },
+  "nav": {
+    "home": "Medusa Ledger home",
+    "core": "Core vs Cloud",
+    "flow": "Event flow",
+    "quickstart": "Quick start",
+    "manual": "Manual",
+    "github": "GitHub",
+    "cloud": "Cloud product",
+    "menu_open": "Open menu",
+    "menu_close": "Close menu",
+    "main": "Main",
+    "language": "Language",
+    "sponsor": "Sponsor"
+  },
+  "hero": {
+    "eyebrow": "Open Source · Apache-2.0",
+    "title": "Medusa Ledger — <em>Open Source Trust Ledger</em> for Business",
+    "lead": "Append-only SHA-256 ledger so anyone can prove business events — without replacing your ERP.",
+    "cta_github": "Star on GitHub",
+    "cta_manual": "Read the manual",
+    "cta_cloud": "Medusa Cloud product",
+    "b1": "SHA-256 · append-only",
+    "b2": "Single ledger per instance",
+    "b3": "docker compose up"
+  },
+  "split": {
+    "title": "Core vs Cloud",
+    "lead": "Open the engine. Keep multi-tenant business features commercial.",
+    "oss_title": "Medusa Core (OSS)",
+    "oss_text": "Blocks, hashes, events, verify, basic API, Docker, SDK, docs. Free to run locally.",
+    "cloud_title": "Medusa Cloud",
+    "cloud_text": "Multi-tenant / white-label, payment anchors, analytics hubs, SLA, ERP connectors, hosting."
+  },
+  "flow": {
+    "title": "Event flow",
+    "lead": "Business facts become verifiable proofs.",
+    "s1": "ORDER_CREATED",
+    "s2": "PAYMENT_AUTHORIZED",
+    "s3": "PAYMENT_CAPTURED",
+    "s4": "COMMISSION_CALCULATED",
+    "s5": "SETTLEMENT_CREATED",
+    "s6": "SHA-256 BLOCK",
+    "s7": "VERIFIABLE"
+  },
+  "quickstart": {
+    "title": "Quick start",
+    "lead": "Clone, compose, post an event, verify the chain.",
+    "step1": "Clone the repository",
+    "step2": "Start the stack",
+    "step3": "Append an event",
+    "step4": "Verify integrity",
+    "note": "Core v0.1 is on the main branch of this repo. Landing docs stay on gh-pages."
+  },
+  "manual_teaser": {
+    "title": "Usage manual",
+    "lead": "Install, API reference, block/tx model, chain verify, and OSS limits.",
+    "cta": "Open full manual"
+  },
+  "sponsors": {
+    "title": "GitHub Sponsors",
+    "lead": "Support Core maintenance. Sponsors fund discovery and roadmap — Cloud/Enterprise remain the commercial path.",
+    "cta": "Become a sponsor"
+  },
+  "cta": {
+    "title": "Need hosted multi-tenant?",
+    "text": "Medusa Cloud runs isolated ledgers per business unit with analytics and payment anchors.",
+    "primary": "Open Medusa Cloud",
+    "secondary": "View GitHub repo"
+  },
+  "footer": {
+    "blurb": "Medusa Ledger — open source trust infrastructure for verifiable business events.",
+    "links": "Links",
+    "manual": "Manual",
+    "github": "Repository",
+    "cloud": "Cloud product",
+    "copy": "Medusa Ledger · Open Source · Powered by P2L"
+  }
+}

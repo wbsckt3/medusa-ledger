@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Medusa Ledger usage manual — install, API, block model, verify, OSS limits." />
+  <meta name="theme-color" content="#c2410c" />
+  <title>Manual — Medusa Ledger OSS</title>
+  <link rel="icon" href="assets/medusa-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0a0a0a; --muted: #475569; --accent: #c2410c; --accent-soft: #fff7ed;
+      --line: #e2e8f0; --bg: #f8fafc; --code: #0a0a0a;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      color: var(--ink); background: var(--bg); line-height: 1.55;
+    }
+    code, pre { font-family: var(--mono); }
+    a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    .toolbar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+      padding: 12px 20px; background: #fff; border-bottom: 1px solid var(--line);
+    }
+    .toolbar__brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--ink); text-decoration: none; }
+    .toolbar__brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+      border-radius: 12px; font-weight: 700; font-size: .92rem; text-decoration: none;
+      background: var(--accent); color: #fff !important;
+    }
+    .btn--ghost { background: #fff; color: var(--ink) !important; border: 1px solid var(--line); }
+    .wrap { width: min(820px, calc(100% - 32px)); margin: 32px auto 64px; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.6rem, 3vw, 2.1rem); letter-spacing: -.02em; }
+    .lead { margin: 0 0 28px; color: var(--muted); font-size: 1.05rem; }
+    h2 { margin: 36px 0 12px; font-size: 1.25rem; padding-top: 8px; border-top: 1px solid var(--line); }
+    h3 { margin: 20px 0 8px; font-size: 1.02rem; }
+    p, li { color: var(--muted); }
+    ul { padding-left: 1.2rem; }
+    .toc {
+      padding: 16px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line);
+      margin-bottom: 28px;
+    }
+    .toc strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .toc a { display: block; margin: 4px 0; }
+    pre {
+      margin: 12px 0; padding: 14px 16px; border-radius: 12px; background: var(--code);
+      color: #e2e8f0; font-size: .84rem; overflow-x: auto; line-height: 1.5;
+    }
+    .callout {
+      padding: 14px 16px; border-radius: 12px; background: var(--accent-soft);
+      border: 1px solid #fed7aa; color: #9a3412; font-weight: 600; margin: 16px 0;
+    }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: .92rem; }
+    th { background: #fff7ed; color: var(--ink); }
+    .footer-note { margin-top: 40px; font-size: .88rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <a class="toolbar__brand" href="index.html">
+      <img src="assets/medusa-logo.png" alt="" width="32" height="32" />
+      <span>Medusa Ledger · Manual</span>
+    </a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a class="btn btn--ghost" href="index.html">← Landing OSS</a>
+      <a class="btn" href="https://github.com/wbsckt3/medusa-ledger">GitHub</a>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <h1>Usage manual</h1>
+    <p class="lead">
+      How to run Medusa Ledger Core locally, append events, seal blocks, and verify the chain.
+      This manual describes the OSS API surface (<code>v0.1</code>).
+    </p>
+
+    <nav class="toc" aria-label="Table of contents">
+      <strong>Contents</strong>
+      <a href="#install">1. Install / Docker</a>
+      <a href="#api">2. API reference</a>
+      <a href="#model">3. Block &amp; transaction model</a>
+      <a href="#verify">4. Verify chain</a>
+      <a href="#limits">5. OSS limits vs Cloud</a>
+      <a href="#license">6. License &amp; Sponsors</a>
+    </nav>
+
+    <h2 id="install">1. Install / Docker</h2>
+    <p>Requirements: Docker Desktop (or Docker Engine + Compose).</p>
+<pre>git clone https://github.com/wbsckt3/medusa-ledger.git
+cd medusa-ledger
+docker compose up</pre>
+    <p>Expected local ports (v0.1):</p>
+    <ul>
+      <li><code>http://localhost:8080/api</code> — HTTP API</li>
+      <li><code>http://localhost:8080/api/verify</code> — chain integrity</li>
+    </ul>
+    <div class="callout">
+      Core <code>v0.1</code> lives on branch <code>main</code> of this repository.
+      Commercial Cloud demo: <a href="https://wbsckt3.github.io/medusa-ledger-business/">medusa-ledger-business</a>.
+    </div>
+
+    <h2 id="api">2. API reference</h2>
+
+    <h3>POST /api/events</h3>
+    <p>Append a business event to the pending pool (idempotent by <code>eventId</code> when provided).</p>
+<pre>curl -X POST http://localhost:8080/api/events \
+  -H "Content-Type: application/json" \
+  -d '{
+    "eventId": "pay-001",
+    "eventType": "PAYMENT_CAPTURED",
+    "amount": 50000,
+    "currency": "COP",
+    "actors": ["customer","operator"],
+    "payload": { "invoice": "INV-9" }
+  }'</pre>
+
+    <h3>POST /api/seal</h3>
+    <p>Seal pending transactions into the next SHA-256 block linked to <code>previousHash</code>.</p>
+<pre>curl -X POST http://localhost:8080/api/seal \
+  -H "Content-Type: application/json" \
+  -d '{ "maxTx": 100 }'</pre>
+
+    <h3>GET /api/blocks</h3>
+<pre>curl "http://localhost:8080/api/blocks?limit=40"</pre>
+
+    <h3>GET /api/verify</h3>
+<pre>curl http://localhost:8080/api/verify</pre>
+    <p>Response shape:</p>
+<pre>{
+  "valid": true,
+  "blocks": 3,
+  "error": null,
+  "at": null
+}</pre>
+
+    <h2 id="model">3. Block &amp; transaction model</h2>
+    <p>
+      Same Savjee-like ideas used in the P2L Cloud adapter
+      (<code>medusaChainService</code>): genesis block, pending txs, seal with previous hash, no PoW.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Concept</th><th>Meaning</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Transaction</td><td>Business event + <code>payloadHash</code> (SHA-256 of stable JSON)</td></tr>
+        <tr><td>Pending</td><td>Tx not yet sealed into a block</td></tr>
+        <tr><td>Block</td><td><code>index</code>, <code>timestamp</code>, <code>previousHash</code>, list of tx hashes, <code>hash</code></td></tr>
+        <tr><td>Genesis</td><td>Block <code>index = 0</code>, <code>previousHash = "0"</code></td></tr>
+        <tr><td>Append-only</td><td>No updates/deletes of sealed history in Core</td></tr>
+      </tbody>
+    </table>
+    <h3>Block hash input</h3>
+<pre>index|ISO_timestamp|previousHash|txHash1,txHash2,...</pre>
+    <p>Then <code>SHA-256</code> hex digest.</p>
+
+    <h2 id="verify">4. Verify chain</h2>
+    <ol>
+      <li>Load blocks ordered by <code>index</code>.</li>
+      <li>Check genesis <code>previousHash</code>.</li>
+      <li>Recompute each block hash; compare to stored <code>hash</code>.</li>
+      <li>Ensure <code>block[n].previousHash === block[n-1].hash</code>.</li>
+    </ol>
+    <p>Any tampered payload or reordered link fails verify — that is the trust proof.</p>
+
+    <h2 id="limits">5. OSS limits vs Cloud</h2>
+    <table>
+      <thead>
+        <tr><th>Medusa Core (OSS)</th><th>Medusa Cloud</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Single ledger per instance</td><td>Multi-tenant / white-label ledgers</td></tr>
+        <tr><td>Generic events API</td><td>Payment gateway anchors (e.g. ePayco)</td></tr>
+        <tr><td>Basic verify / seal</td><td>Analytics hubs, admin keys, realtime rooms</td></tr>
+        <tr><td>Self-hosted Docker</td><td>Hosting, SLA, backups, compliance tooling</td></tr>
+        <tr><td>No ERP connectors bundled</td><td>ERP / BI / AI consumers as product</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Cloud product landing:
+      <a href="https://wbsckt3.github.io/medusa-ledger-business/">medusa-ledger-business</a>
+    </p>
+
+    <h2 id="license">6. License &amp; Sponsors</h2>
+    <ul>
+      <li>License: <strong>Apache-2.0</strong></li>
+      <li>Sponsors: <a href="https://github.com/sponsors/wbsckt3">github.com/sponsors/wbsckt3</a></li>
+      <li>Npm scope: <code>@medusa-ledger/*</code> (avoids clash with Medusa e-commerce)</li>
+    </ul>
+
+    <p class="footer-note">
+      ERP records what happened. Medusa proves what happened. AI understands what happened.
+    </p>
+  </main>
+</body>
+</html>

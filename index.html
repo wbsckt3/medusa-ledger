@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Medusa Ledger — Open Source Trust Ledger for Business." data-i18n-meta="meta.description" />
+  <meta name="theme-color" content="#c2410c" />
+  <title data-i18n="meta.title">Medusa Ledger — Open Source Trust Ledger</title>
+  <link rel="icon" href="assets/medusa-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --accent-50: #fff7ed; --accent-100: #ffedd5; --accent-200: #fed7aa;
+      --accent-400: #fb923c; --accent-500: #f97316; --accent-600: #ea580c;
+      --accent-700: #c2410c; --accent-800: #9a3412;
+      --ink: #0a0a0a; --muted: #64748b; --line: #e2e8f0; --white: #fff;
+      --shadow: 0 18px 48px rgba(10,10,10,.12); --radius: 16px; --header-h: 72px;
+      --code-bg: #0a0a0a; --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      color: var(--ink); background: var(--white); line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: none; background: none; }
+    .container { width: min(1100px, calc(100% - 32px)); margin-inline: auto; }
+    code, pre { font-family: var(--mono); }
+
+    .site-header {
+      position: fixed; inset: 0 0 auto 0; z-index: 100; height: var(--header-h);
+      background: rgba(255,255,255,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s;
+    }
+    .site-header.is-scrolled { border-color: var(--line); box-shadow: 0 8px 24px rgba(10,10,10,.06); }
+    .site-header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.02em; }
+    .brand__logo { height: 44px; width: auto; border-radius: 10px; }
+    .brand__tag { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-700); }
+    .nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .nav a { padding: 8px 10px; border-radius: 999px; font-size: .86rem; font-weight: 600; color: var(--muted); }
+    .nav a:hover { color: var(--ink); background: var(--accent-50); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 20px; border-radius: 999px; font-weight: 700; font-size: .92rem;
+      transition: transform .15s, box-shadow .15s; white-space: nowrap;
+    }
+    .btn--primary {
+      background: linear-gradient(135deg, var(--accent-500), var(--accent-700));
+      color: #fff; box-shadow: 0 10px 28px rgba(194,65,12,.35);
+    }
+    .btn--outline { border: 2px solid var(--accent-200); color: var(--accent-800); background: #fff; }
+    .btn--dark { background: #0a0a0a; color: #fff; }
+    .btn--lg { padding: 14px 26px; font-size: 1rem; }
+    .menu-toggle {
+      display: none; width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--line);
+      align-items: center; justify-content: center; font-size: 1.25rem;
+    }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .qa-lang-switch {
+      display: inline-flex; gap: 4px; padding: 3px; border-radius: 10px;
+      background: #f1f5f9; border: 1px solid #e2e8f0;
+    }
+    .qa-lang-switch__btn {
+      min-width: 2.25rem; padding: 6px 10px; border-radius: 8px;
+      font-size: .78rem; font-weight: 800; color: #64748b;
+    }
+    .qa-lang-switch__btn--active { background: var(--accent-700); color: #fff; }
+
+    .hero {
+      padding: calc(var(--header-h) + 48px) 0 64px;
+      background:
+        radial-gradient(ellipse 80% 60% at 100% 0%, rgba(125,211,252,.22), transparent 60%),
+        radial-gradient(ellipse 60% 50% at 0% 100%, rgba(249,115,22,.12), transparent 55%),
+        linear-gradient(180deg, #f8fbff 0%, #fff 100%);
+    }
+    .hero__grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 36px; align-items: center; }
+    .hero__eyebrow {
+      display: inline-flex; padding: 6px 14px; border-radius: 999px; margin-bottom: 16px;
+      background: var(--accent-50); border: 1px solid var(--accent-200); color: var(--accent-800);
+      font-size: .82rem; font-weight: 700;
+    }
+    .hero__title {
+      margin: 0 0 14px; font-size: clamp(1.85rem, 4.2vw, 2.85rem);
+      line-height: 1.1; letter-spacing: -.03em; font-weight: 800;
+    }
+    .hero__title em { font-style: normal; color: var(--accent-600); }
+    .hero__lead { margin: 0 0 24px; color: var(--muted); font-size: clamp(1rem, 2vw, 1.12rem); max-width: 38rem; font-weight: 600; }
+    .hero__ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+    .hero__badges { display: flex; flex-wrap: wrap; gap: 10px; }
+    .hero__badge {
+      padding: 8px 12px; border-radius: 12px; background: #fff; border: 1px solid var(--line);
+      font-size: .82rem; font-weight: 600; color: var(--muted);
+    }
+    .hero__visual {
+      display: grid; place-items: center; padding: 28px; border-radius: 28px; min-height: 300px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(125,211,252,.35), transparent 55%),
+        linear-gradient(160deg, #0a0a0a, #1e293b 55%, #334155);
+      box-shadow: var(--shadow);
+    }
+    .hero__visual img {
+      width: min(200px, 70%); border-radius: 24px; background: #fff; padding: 16px;
+      box-shadow: 0 16px 40px rgba(10,10,10,.35);
+    }
+
+    .section { padding: 72px 0; }
+    .section--alt { background: #f8fafc; }
+    .section__head { text-align: center; max-width: 720px; margin: 0 auto 36px; }
+    .section__head h2 { margin: 0 0 10px; font-size: clamp(1.5rem, 3vw, 2.05rem); letter-spacing: -.02em; }
+    .section__head p { margin: 0; color: var(--muted); }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .card {
+      padding: 24px; border-radius: var(--radius); background: #fff; border: 1px solid var(--line);
+      box-shadow: 0 10px 30px rgba(10,10,10,.04);
+    }
+    .card--oss { border-color: var(--accent-200); background: var(--accent-50); }
+    .card--cloud { background: #0a0a0a; color: #e7e5e4; border-color: #1c1917; }
+    .card h3 { margin: 0 0 8px; font-size: 1.08rem; }
+    .card--cloud h3 { color: var(--accent-400); }
+    .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+    .card--cloud p { color: #a8a29e; }
+
+    .flow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .flow__step {
+      padding: 14px 8px; border-radius: 12px; background: #fff; border: 1px solid var(--line);
+      text-align: center; font-size: .72rem; font-weight: 700; word-break: break-word;
+    }
+    .flow__step span {
+      display: grid; place-items: center; width: 26px; height: 26px; margin: 0 auto 8px;
+      border-radius: 8px; background: var(--accent-50); color: var(--accent-700); font-size: .75rem;
+    }
+
+    .code-block {
+      margin: 0; padding: 16px 18px; border-radius: 14px; background: var(--code-bg); color: #e2e8f0;
+      font-size: .85rem; overflow-x: auto; line-height: 1.55;
+    }
+    .steps-doc { display: grid; gap: 20px; max-width: 820px; margin: 0 auto; }
+    .step-doc h3 { margin: 0 0 8px; font-size: 1rem; }
+    .step-doc p { margin: 0 0 10px; color: var(--muted); font-size: .92rem; }
+    .note {
+      max-width: 820px; margin: 24px auto 0; padding: 14px 16px; border-radius: 12px;
+      background: var(--accent-50); border: 1px solid var(--accent-200); color: var(--accent-800);
+      font-size: .9rem; font-weight: 600;
+    }
+
+    .cta-box {
+      text-align: center; padding: 48px 24px; border-radius: 24px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(125,211,252,.2), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(249,115,22,.12), transparent 45%),
+        #fff7ed;
+      border: 1px solid var(--accent-100);
+    }
+    .cta-box h2 { margin: 0 0 10px; font-size: clamp(1.35rem, 3vw, 1.85rem); }
+    .cta-box p { margin: 0 auto 22px; color: var(--muted); max-width: 560px; }
+    .cta-box .row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    .footer { background: #0a0a0a; color: #cbd5e1; padding: 48px 0 28px; font-size: .9rem; }
+    .footer__grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 28px; margin-bottom: 28px; }
+    .footer h4 { margin: 0 0 12px; color: #fff; }
+    .footer ul { list-style: none; margin: 0; padding: 0; }
+    .footer li { margin-bottom: 8px; }
+    .footer a { color: #94a3b8; }
+    .footer a:hover { color: #fff; }
+    .footer__copy { padding-top: 18px; border-top: 1px solid #1e293b; color: #64748b; text-align: center; font-size: .82rem; }
+
+    @media (max-width: 960px) {
+      .hero__grid, .split, .flow, .footer__grid { grid-template-columns: 1fr; }
+      .hero__grid { text-align: center; }
+      .hero__lead { margin-inline: auto; }
+      .hero__ctas, .hero__badges { justify-content: center; }
+    }
+    @media (max-width: 720px) {
+      .nav {
+        display: none; position: absolute; top: var(--header-h); left: 0; right: 0;
+        flex-direction: column; align-items: stretch; padding: 12px 16px 16px;
+        background: #fff; border-bottom: 1px solid var(--line);
+      }
+      .nav.is-open { display: flex; }
+      .menu-toggle { display: inline-flex; }
+      .header-cta-desktop { display: none; }
+    }
+    @media (min-width: 721px) { .nav-cta-mobile { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="header">
+    <div class="container site-header__inner">
+      <a href="#" class="brand" data-i18n-aria="nav.home" aria-label="Medusa Ledger home">
+        <img class="brand__logo" src="assets/medusa-logo.png" alt="Medusa" width="44" height="44" />
+        <span>
+          <span style="display:block;font-weight:800;line-height:1.1;">Medusa Ledger</span>
+          <span class="brand__tag">OSS</span>
+        </span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" type="button" data-i18n-aria="nav.menu_open" aria-label="Open menu" aria-expanded="false">☰</button>
+      <nav class="nav" id="mainNav" data-i18n-aria="nav.main" aria-label="Main">
+        <a href="#split" data-i18n="nav.core">Core vs Cloud</a>
+        <a href="#flow" data-i18n="nav.flow">Event flow</a>
+        <a href="#quickstart" data-i18n="nav.quickstart">Quick start</a>
+        <a href="manual.html" data-i18n="nav.manual">Manual</a>
+        <a href="https://github.com/wbsckt3/medusa-ledger" data-i18n="nav.github">GitHub</a>
+        <a class="btn btn--primary nav-cta-mobile" href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="nav.cloud">Cloud product</a>
+      </nav>
+      <div class="header-actions">
+        <div class="qa-lang-switch" role="group" data-i18n-aria="nav.language" aria-label="Language">
+          <button type="button" class="qa-lang-switch__btn" data-set-locale="es" aria-pressed="false">ES</button>
+          <button type="button" class="qa-lang-switch__btn qa-lang-switch__btn--active" data-set-locale="en" aria-pressed="true">EN</button>
+        </div>
+        <a class="btn btn--dark header-cta-desktop" href="https://github.com/wbsckt3/medusa-ledger" data-i18n="nav.github">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div>
+          <div class="hero__eyebrow" data-i18n="hero.eyebrow">Open Source · Apache-2.0</div>
+          <h1 class="hero__title" data-i18n="hero.title" data-i18n-html>Medusa Ledger — <em>Open Source Trust Ledger</em> for Business</h1>
+          <p class="hero__lead" data-i18n="hero.lead">Append-only SHA-256 ledger so anyone can prove business events — without replacing your ERP.</p>
+          <div class="hero__ctas">
+            <a class="btn btn--dark btn--lg" href="https://github.com/wbsckt3/medusa-ledger" data-i18n="hero.cta_github">Star on GitHub</a>
+            <a class="btn btn--primary btn--lg" href="manual.html" data-i18n="hero.cta_manual">Read the manual</a>
+            <a class="btn btn--outline btn--lg" href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="hero.cta_cloud">Medusa Cloud product</a>
+          </div>
+          <div class="hero__badges">
+            <span class="hero__badge" data-i18n="hero.b1">SHA-256 · append-only</span>
+            <span class="hero__badge" data-i18n="hero.b2">Single ledger per instance</span>
+            <span class="hero__badge" data-i18n="hero.b3">docker compose up</span>
+          </div>
+        </div>
+        <div class="hero__visual" aria-hidden="true">
+          <img src="assets/medusa-logo.png" alt="" width="200" height="200" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="split">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="split.title">Core vs Cloud</h2>
+          <p data-i18n="split.lead">Open the engine. Keep multi-tenant business features commercial.</p>
+        </div>
+        <div class="split">
+          <article class="card card--oss">
+            <h3 data-i18n="split.oss_title">Medusa Core (OSS)</h3>
+            <p data-i18n="split.oss_text">Blocks, hashes, events, verify, basic API, Docker, SDK, docs.</p>
+          </article>
+          <article class="card card--cloud">
+            <h3 data-i18n="split.cloud_title">Medusa Cloud</h3>
+            <p data-i18n="split.cloud_text">Multi-tenant / white-label, payment anchors, analytics hubs, SLA, ERP connectors.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="flow">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="flow.title">Event flow</h2>
+          <p data-i18n="flow.lead">Business facts become verifiable proofs.</p>
+        </div>
+        <div class="flow">
+          <div class="flow__step"><span>1</span><div data-i18n="flow.s1">ORDER_CREATED</div></div>
+          <div class="flow__step"><span>2</span><div data-i18n="flow.s2">PAYMENT_AUTHORIZED</div></div>
+          <div class="flow__step"><span>3</span><div data-i18n="flow.s3">PAYMENT_CAPTURED</div></div>
+          <div class="flow__step"><span>4</span><div data-i18n="flow.s4">COMMISSION_CALCULATED</div></div>
+          <div class="flow__step"><span>5</span><div data-i18n="flow.s5">SETTLEMENT_CREATED</div></div>
+          <div class="flow__step"><span>6</span><div data-i18n="flow.s6">SHA-256 BLOCK</div></div>
+          <div class="flow__step"><span>7</span><div data-i18n="flow.s7">VERIFIABLE</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="quickstart">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="quickstart.title">Quick start</h2>
+          <p data-i18n="quickstart.lead">Clone, compose, post an event, verify the chain.</p>
+        </div>
+        <div class="steps-doc">
+          <div class="step-doc">
+            <h3 data-i18n="quickstart.step1">Clone the repository</h3>
+            <pre class="code-block">git clone https://github.com/wbsckt3/medusa-ledger.git
+cd medusa-ledger</pre>
+          </div>
+          <div class="step-doc">
+            <h3 data-i18n="quickstart.step2">Start the stack</h3>
+            <pre class="code-block">docker compose up</pre>
+          </div>
+          <div class="step-doc">
+            <h3 data-i18n="quickstart.step3">Append an event</h3>
+            <pre class="code-block">curl -X POST http://localhost:8080/api/events \
+  -H "Content-Type: application/json" \
+  -d '{"eventId":"pay-1","eventType":"PAYMENT_CAPTURED","amount":50000}'</pre>
+          </div>
+          <div class="step-doc">
+            <h3 data-i18n="quickstart.step4">Verify integrity</h3>
+            <pre class="code-block">curl http://localhost:8080/api/verify</pre>
+          </div>
+        </div>
+        <p class="note" data-i18n="quickstart.note">Core v0.1 is on the main branch of this repo. Landing docs stay on gh-pages.</p>
+      </div>
+    </section>
+
+    <section class="section" id="manual">
+      <div class="container">
+        <div class="cta-box">
+          <h2 data-i18n="manual_teaser.title">Usage manual</h2>
+          <p data-i18n="manual_teaser.lead">Install, API reference, block/tx model, chain verify, and OSS limits.</p>
+          <div class="row">
+            <a class="btn btn--primary btn--lg" href="manual.html" data-i18n="manual_teaser.cta">Open full manual</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="sponsors">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="sponsors.title">GitHub Sponsors</h2>
+          <p data-i18n="sponsors.lead">Support Core maintenance. Sponsors fund discovery and roadmap.</p>
+        </div>
+        <div style="text-align:center;">
+          <a class="btn btn--primary btn--lg" href="https://github.com/sponsors/wbsckt3" data-i18n="sponsors.cta">Become a sponsor</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cloud">
+      <div class="container">
+        <div class="cta-box">
+          <h2 data-i18n="cta.title">Need hosted multi-tenant?</h2>
+          <p data-i18n="cta.text">Medusa Cloud runs isolated ledgers per business unit with analytics and payment anchors.</p>
+          <div class="row">
+            <a class="btn btn--primary btn--lg" href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="cta.primary">Open Medusa Cloud</a>
+            <a class="btn btn--outline btn--lg" href="https://github.com/wbsckt3/medusa-ledger" data-i18n="cta.secondary">View GitHub repo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <strong style="color:#fff;font-size:1.15rem;display:block;margin-bottom:10px;">Medusa Ledger</strong>
+          <p style="margin:0;max-width:340px;" data-i18n="footer.blurb">Open source trust infrastructure for verifiable business events.</p>
+        </div>
+        <div>
+          <h4 data-i18n="footer.links">Links</h4>
+          <ul>
+            <li><a href="manual.html" data-i18n="footer.manual">Manual</a></li>
+            <li><a href="https://github.com/wbsckt3/medusa-ledger" data-i18n="footer.github">Repository</a></li>
+            <li><a href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="footer.cloud">Cloud product</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__copy">© <span id="year"></span> <span data-i18n="footer.copy">Medusa Ledger · Open Source · Powered by P2L</span></p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/i18next@23.4.6/i18next.min.js"></script>
+  <script src="scripts/locales-embed.js"></script>
+  <script src="scripts/i18n.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const header = document.getElementById('header');
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 8);
+    }, { passive: true });
+    menuToggle.addEventListener('click', () => {
+      const open = mainNav.classList.toggle('is-open');
+      menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menuToggle.textContent = open ? '✕' : '☰';
+    });
+    mainNav.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => {
+        mainNav.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.textContent = '☰';
+      });
+    });
+  </script>
+</body>
+</html>
