@@ -1,0 +1,8 @@
+{
+  "name": "@medusa-ledger/core",
+  "version": "0.1.0",
+  "description": "Medusa Ledger core — SHA-256 append-only chain engine",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "engines": { "node": ">=18" }
+}

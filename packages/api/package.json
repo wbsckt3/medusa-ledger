@@ -1,0 +1,11 @@
+{
+  "name": "@medusa-ledger/api",
+  "version": "0.1.0",
+  "description": "HTTP API for Medusa Ledger Core (zero runtime deps beyond core)",
+  "main": "src/server.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "engines": { "node": ">=18" }
+}

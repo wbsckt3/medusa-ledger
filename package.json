@@ -1,0 +1,31 @@
+{
+  "name": "medusa-ledger",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open source business trust ledger for verifiable financial and operational events",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "node packages/api/src/server.js",
+    "dev": "node packages/api/src/server.js",
+    "test": "node --test packages/core/test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wbsckt3/medusa-ledger.git"
+  },
+  "homepage": "https://wbsckt3.github.io/medusa-ledger/",
+  "keywords": [
+    "ledger",
+    "blockchain",
+    "sha-256",
+    "trust",
+    "append-only",
+    "business-events"
+  ]
+}

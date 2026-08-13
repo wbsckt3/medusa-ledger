@@ -1,0 +1,8 @@
+services:
+  medusa-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      MEDUSA_AUTO_SEAL_ON_EVENT: "1"

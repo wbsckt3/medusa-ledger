@@ -1,0 +1,8 @@
+{
+  "name": "@medusa-ledger/sdk",
+  "version": "0.1.0",
+  "description": "Minimal JS client for Medusa Ledger API",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "engines": { "node": ">=18" }
+}
