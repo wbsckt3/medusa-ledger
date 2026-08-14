@@ -103,6 +103,7 @@
     }
     .hero__visual {
       display: grid; place-items: center;
+      gap: 14px;
       min-height: 260px;
       padding: 0;
       background: transparent;
@@ -116,6 +117,17 @@
       padding: 0;
       box-shadow: none;
     }
+    .logo-mark {
+      margin: 0;
+      font-size: .92rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .logo-mark__dim { color: #cbd5e1; font-weight: 700; }
+    .logo-mark__hot { color: #0a0a0a; }
+    .logo-mark__sep { color: #cbd5e1; font-weight: 600; margin: 0 .35em; }
 
     .section { padding: 72px 0; }
     .section--alt { background: #f8fafc; }
@@ -249,6 +261,9 @@
         </div>
         <div class="hero__visual" aria-hidden="true">
           <img src="assets/medusa-logo.png" alt="" width="200" height="200" />
+          <p class="logo-mark">
+            <span class="logo-mark__hot">Docker OSS</span><span class="logo-mark__sep">|</span><span class="logo-mark__dim">Business</span>
+          </p>
         </div>
       </div>
     </section>
