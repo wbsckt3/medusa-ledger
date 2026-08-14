@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Developer guide — Medusa Ledger OSS: events, Docker demo, verify, Core vs Cloud." />
-  <title>Developer guide — Medusa Ledger OSS</title>
+  <meta name="description" content="Medusa Ledger Concept — events, Docker demo, verify, chain visual, tampering, domains, CLI." />
+  <meta name="theme-color" content="#c2410c" />
+  <title>Concept — Medusa Ledger OSS</title>
   <link rel="icon" href="assets/medusa-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
   <style>
-    :root { --ink:#0a0a0a; --muted:#475569; --accent:#c2410c; --line:#e2e8f0; --bg:#f8fafc; --code:#0a0a0a; }
+    :root { --ink:#0a0a0a; --muted:#475569; --accent:#c2410c; --accent-soft:#fff7ed; --accent-200:#fed7aa; --line:#e2e8f0; --bg:#f8fafc; --code:#0a0a0a; }
     * { box-sizing: border-box; }
     body { margin:0; font-family:"Plus Jakarta Sans",system-ui,sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; }
     code, pre { font-family:"JetBrains Mono",ui-monospace,monospace; }
@@ -23,43 +26,55 @@
     h1 { margin:0 0 8px; font-size:clamp(1.6rem,3vw,2.1rem); letter-spacing:-.02em; }
     .lead { margin:0 0 24px; color:var(--muted); font-size:1.05rem; }
     .hook { padding:18px 20px; border-radius:14px; background:#fff; border:1px solid var(--line); font-weight:700; font-size:1.08rem; margin-bottom:28px; }
+    .note {
+      padding:14px 16px; border-radius:12px; background:var(--accent-soft);
+      border:1px solid var(--accent-200); color:#9a3412; font-weight:600; margin:16px 0 24px; font-size:.95rem;
+    }
     h2 { margin:36px 0 12px; font-size:1.25rem; padding-top:8px; border-top:1px solid var(--line); }
     p, li { color:var(--muted); }
+    ul { padding-left:1.2rem; }
     pre { margin:12px 0; padding:14px 16px; border-radius:12px; background:var(--code); color:#e2e8f0; font-size:.84rem; overflow-x:auto; line-height:1.5; }
     .diagram { white-space:pre; font-family:"JetBrains Mono",monospace; font-size:.82rem; background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; overflow-x:auto; color:#0f172a; }
     .toc { padding:16px 18px; border-radius:14px; background:#fff; border:1px solid var(--line); margin-bottom:28px; }
+    .toc strong { display:block; margin-bottom:8px; color:var(--ink); }
     .toc a { display:block; margin:4px 0; }
+    .footer-note { margin-top:40px; font-size:.88rem; color:#94a3b8; }
   </style>
 </head>
 <body>
   <div class="toolbar">
     <a class="toolbar__brand" href="index.html">
       <img src="assets/medusa-logo.png" alt="" width="32" height="32" />
-      <span>Medusa Ledger · Developers</span>
+      <span>Medusa Ledger · Concept</span>
     </a>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <a class="btn btn--ghost" href="index.html">← Landing</a>
+      <a class="btn btn--ghost" href="storage.html">Storage SPEC</a>
       <a class="btn btn--ghost" href="manual.html">API manual</a>
       <a class="btn" href="https://github.com/wbsckt3/medusa-ledger">GitHub</a>
     </div>
   </div>
   <main class="wrap">
-    <h1>Developer guide</h1>
-    <p class="lead">The OSS demo does not simulate a commercial tenant. It shows one fundamental thing: how a system turns a business fact into verifiable, immutable evidence.</p>
+    <h1>Concept — developer guide</h1>
+    <p class="lead">The OSS demo does not simulate a commercial tenant. It shows one fundamental thing: how a system turns a business fact into verifiable, immutable evidence. An event is a fact in the application that deserves to be proven later. Medusa does not decide what matters — the developer does.</p>
     <p class="hook">You define the event. Medusa makes it verifiable.</p>
 
     <nav class="toc">
-      <strong style="color:var(--ink);display:block;margin-bottom:8px;">Contents</strong>
+      <strong>Contents</strong>
       <a href="#event">1. What is an event?</a>
-      <a href="#docker">2. Docker demo</a>
-      <a href="#chain">3. See the chain</a>
-      <a href="#tamper">4. Detect tampering</a>
-      <a href="#domains">5. Any domain</a>
-      <a href="#split">6. Core vs Cloud</a>
+      <a href="#commercial">2. Commercial example (Cloud)</a>
+      <a href="#demo">3. Developer demo: ORDER_CREATED / PAYMENT_RECEIVED</a>
+      <a href="#verify">4. Verify integrity</a>
+      <a href="#chain">5. See the chain</a>
+      <a href="#tamper">6. Detect tampering</a>
+      <a href="#layers">7. Event, payload, evidence, block, chain</a>
+      <a href="#domains">8. Same Core, many domains</a>
+      <a href="#your-app">9. YOUR APPLICATION diagram</a>
+      <a href="#cli">10. CLI without a UI</a>
     </nav>
 
     <h2 id="event">1. What is an event?</h2>
-    <p>An event is a fact that happened in a system and that you want to prove later was recorded exactly as stored. Medusa does not need to know what the event means.</p>
+    <p>An event is not necessarily a payment. It is a fact that occurred in a system and that later must be shown exactly as it was recorded. The ledger does not need to know what the event means.</p>
     <div class="diagram">EVENT
    │
    ├── eventId
@@ -73,9 +88,29 @@
         BLOCK
           ↓
        CHAIN</div>
-    <p>Medusa is not your business. Medusa says: this fact was registered this way, at this time, and the evidence was not altered.</p>
+    <p>Medusa is not the business. Medusa is the layer that says: this fact was registered this way, at this time, and the evidence was not altered.</p>
 
-    <h2 id="docker">2. Docker demo (no TukTuk, no ePayco, no ERP)</h2>
+    <h2 id="commercial">2. Commercial example (Cloud)</h2>
+    <p class="note">Tuk Tuk on Medusa Cloud is a live commercial example: payment captures from a payment platform become ledger events on a tenant chain. That is the hosted product, not the OSS demo. See the <a href="https://wbsckt3.github.io/medusa-ledger-business/">Medusa Cloud landing</a>.</p>
+    <p>In that product path a captured payment looks like:</p>
+<pre>{
+  "eventId": "pay-84721",
+  "eventType": "PAYMENT_CAPTURED",
+  "amount": 50000,
+  "currency": "COP",
+  "reference": "ORDER-9182"
+}</pre>
+    <p>The OSS download does not need that tenant, that payment provider, or that ERP. The next sections use generic shop events so the Core can be tried on a laptop.</p>
+
+    <h2 id="demo">3. Developer demo: ORDER_CREATED / PAYMENT_RECEIVED</h2>
+    <p>After <code>docker compose up</code>, any small domain works: a shop, a warehouse, an ERP module. Typical first events:</p>
+    <ul>
+      <li><code>PRODUCT_CREATED</code></li>
+      <li><code>ORDER_CREATED</code></li>
+      <li><code>PAYMENT_RECEIVED</code></li>
+      <li><code>ORDER_SHIPPED</code> · <code>ORDER_DELIVERED</code> · <code>REFUND_CREATED</code></li>
+    </ul>
+    <p>Medusa does not “record payments.” It records events from the application.</p>
 <pre>git clone https://github.com/wbsckt3/medusa-ledger.git
 cd medusa-ledger
 docker compose up --build</pre>
@@ -90,6 +125,13 @@ docker compose up --build</pre>
       "currency": "COP"
     }
   }'</pre>
+    <p>Response:</p>
+<pre>{
+  "success": true,
+  "eventId": "order-001",
+  "block": 1,
+  "hash": "a7f92..."
+}</pre>
 <pre>curl -X POST http://localhost:8080/api/events \
   -H "Content-Type: application/json" \
   -d '{
@@ -101,16 +143,109 @@ docker compose up --build</pre>
       "currency": "COP"
     }
   }'</pre>
-<pre>curl http://localhost:8080/api/verify</pre>
-    <p>Magic moment: <code>{"valid":true,"message":"Ledger integrity verified"}</code></p>
-    <p>CLI alternative:</p>
-<pre>node bin/medusa.js event create --type ORDER_CREATED --id order-002 --amount 12000
-node bin/medusa.js ledger verify
-node bin/medusa.js ledger show</pre>
 
-    <h2 id="chain">3. See the chain</h2>
+    <h2 id="verify">4. Verify integrity</h2>
+    <p>The first magic moment of the demo is a green verify after two facts:</p>
+<pre>curl http://localhost:8080/api/verify</pre>
+<pre>{
+  "valid": true,
+  "blocks": 2,
+  "message": "Ledger integrity verified"
+}</pre>
+    <p>Two events are now sealed. The next section shows how they link.</p>
+
+    <h2 id="chain">5. See the chain</h2>
 <pre>curl http://localhost:8080/api/ledger/show</pre>
+    <div class="diagram">MEDUSA LEDGER
+
+Block #0
+GENESIS
+hash: 000000...
+
+        ↓
+
+Block #1
+ORDER_CREATED
+eventId: order-001
+previousHash: 000000...
+hash: a7f92c...
+
+        ↓
+
+Block #2
+PAYMENT_RECEIVED
+eventId: payment-001
+previousHash: a7f92c...
+hash: 91b83d...
+
+        ↓
+
+✓ CHAIN VALID</div>
+    <p>Visual reading: event → hash → block → previousHash → next block. That is the blockchain idea without a separate lecture.</p>
+
+    <h2 id="tamper">6. Detect tampering</h2>
+    <p>Suppose a stored amount changes from <code>50000</code> to <code>90000</code>. The block hash no longer matches.</p>
+    <div class="diagram">Block #2
+       │
+       ├── previousHash ✓
+       ├── payload      ✗
+       └── hash         ✗</div>
+<pre>curl http://localhost:8080/api/verify</pre>
+<pre>{
+  "valid": false,
+  "block": 2,
+  "reason": "Hash mismatch"
+}</pre>
+    <p>Second magic moment: not “there is a blockchain,” but “an altered historical fact is detectable.”</p>
+
+    <h2 id="layers">7. Event, payload, evidence, block, chain</h2>
+    <p>Keep these layers separate. Medusa works on evidence and the chain, not on business rules.</p>
+    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;margin:12px 0 20px;">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);background:#fff7ed;color:var(--ink);">Layer</th>
+          <th style="text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);background:#fff7ed;color:var(--ink);">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);">Event</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);"><code>PAYMENT_RECEIVED</code></td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);">Payload</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);"><code>{"orderId":"ORDER-123","amount":50000}</code></td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);">Evidence</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);"><code>SHA-256(...)</code></td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);">Block</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);">Block #17</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);color:var(--muted);">Chain</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--line);">#15 → #16 → #17 → #18</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The application owns event types and payloads. Medusa owns hashes, blocks, and verify.</p>
+
+    <h2 id="domains">8. Same Core, many domains</h2>
+    <p>The Core does not need to know any of these vocabularies. That is the value of a protocol instead of a vertical app.</p>
+    <ul>
+      <li>E-commerce: <code>ORDER_CREATED</code>, <code>PAYMENT_RECEIVED</code>, <code>REFUND_CREATED</code></li>
+      <li>Logistics: <code>PACKAGE_RECEIVED</code>, <code>PACKAGE_DISPATCHED</code>, <code>PACKAGE_DELIVERED</code></li>
+      <li>HR: <code>EMPLOYEE_CREATED</code>, <code>CONTRACT_SIGNED</code>, <code>SALARY_PAID</code></li>
+      <li>SaaS: <code>SUBSCRIPTION_CREATED</code>, <code>SUBSCRIPTION_RENEWED</code>, <code>SUBSCRIPTION_CANCELLED</code></li>
+      <li>Finance: <code>TRANSFER_CREATED</code>, <code>TRANSFER_APPROVED</code>, <code>TRANSFER_SETTLED</code></li>
+      <li>IoT: <code>SENSOR_READING</code>, <code>TEMPERATURE_THRESHOLD_EXCEEDED</code>, <code>DEVICE_MAINTENANCE</code></li>
+    </ul>
+
+    <h2 id="your-app">9. YOUR APPLICATION diagram</h2>
     <div class="diagram">YOUR APPLICATION
+       │
        │  "Something happened"
        ▼
    MEDUSA CORE
@@ -118,23 +253,46 @@ node bin/medusa.js ledger show</pre>
        ├── event
        ├── timestamp
        ├── payload
+       │
        ▼
-    SHA-256 → BLOCK → LEDGER → VERIFY</div>
+    SHA-256
+       │
+       ▼
+     BLOCK
+       │
+       ▼
+    LEDGER
+       │
+       ▼
+     VERIFY</div>
+    <p class="hook" style="margin-top:16px;">You define the event. Medusa makes it verifiable.</p>
+    <p>Where the files live, and how Node appends while Spring verifies the same chain, is covered in the <a href="storage.html">Storage SPEC</a>.</p>
 
-    <h2 id="tamper">4. Detect tampering</h2>
-    <p>If someone changes a stored amount from 50000 to 90000, the block hash no longer matches. <code>/api/verify</code> returns <code>valid: false</code> with reason <code>Hash mismatch</code>. That is the second magic moment: not “I have blockchain”, but “I can detect that history was altered”.</p>
+    <h2 id="cli">10. CLI without a UI</h2>
+    <p>No second application is required. After the container is up:</p>
+<pre>node bin/medusa.js event create --type PAYMENT_RECEIVED --id payment-001 --amount 50000
+node bin/medusa.js ledger verify
+node bin/medusa.js ledger show</pre>
+    <p>Append result:</p>
+<pre>✓ Event appended
 
-    <h2 id="domains">5. Same Core, many domains</h2>
-    <ul>
-      <li>E-commerce: ORDER_CREATED, PAYMENT_RECEIVED, REFUND_CREATED</li>
-      <li>Logistics: PACKAGE_DISPATCHED, PACKAGE_DELIVERED</li>
-      <li>HR: CONTRACT_SIGNED, SALARY_PAID</li>
-      <li>SaaS: SUBSCRIPTION_CREATED, SUBSCRIPTION_CANCELLED</li>
-      <li>IoT: SENSOR_READING, DEVICE_MAINTENANCE</li>
-    </ul>
-    <p>Medusa does not need to know any of those domains. That is the value of the Core.</p>
+Event:     PAYMENT_RECEIVED
+ID:        payment-001
+Block:     12
+Hash:      9d4f...
+Timestamp: 2026-08-14T00:21:32Z</pre>
+    <p>Verify result:</p>
+<pre>MEDUSA LEDGER
 
-    <h2 id="split">6. Core vs Cloud</h2>
+Blocks: 12
+Events: 11
+
+✓ Genesis block
+✓ Hash chain
+✓ Previous hashes
+✓ Event integrity
+
+LEDGER VALID</pre>
     <div class="diagram">        MEDUSA CORE
      "Make events verifiable"
               │
@@ -143,8 +301,10 @@ node bin/medusa.js ledger show</pre>
  Docker OSS         Medusa Cloud
  Own events         Business events
  Own ledger         Tenant ledger
- CLI / API          Dashboard + WL + payments + ERP</div>
-    <p>Cloud product: <a href="https://wbsckt3.github.io/medusa-ledger-business/">medusa-ledger-business</a></p>
+ CLI / API          Dashboard + WL + payment anchors + ERP</div>
+    <p>Core OSS contains blocks, hashes, events, and verify. Cloud adds multi-tenant, white-label, payment anchors, analytics, and ERP connectors. Product site: <a href="https://wbsckt3.github.io/medusa-ledger-business/">medusa-ledger-business</a>.</p>
+
+    <p class="footer-note">Concept · Medusa Ledger OSS · <a href="index.html">Landing</a> · <a href="storage.html">Storage SPEC</a> · <a href="manual.html">API manual</a></p>
   </main>
 </body>
 </html>

@@ -104,12 +104,12 @@
       min-width: 0;
       justify-content: center;
       text-align: center;
-      padding: 12px 8px;
-      font-size: .82rem;
+      padding: 11px 6px;
+      font-size: .78rem;
       line-height: 1.25;
       white-space: nowrap;
     }
-    .hero__ctas .btn--lg { padding: 12px 8px; font-size: .82rem; }
+    .hero__ctas .btn--lg { padding: 11px 6px; font-size: .78rem; }
     .hero__badges { display: flex; flex-wrap: wrap; gap: 10px; }
     .hero__badge {
       padding: 8px 12px; border-radius: 12px; background: #fff; border: 1px solid var(--line);
@@ -184,6 +184,32 @@
       font-size: .9rem; font-weight: 600;
     }
 
+    .spec-tabs__nav {
+      display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+      padding: 4px; border-radius: 14px; margin: 0 auto 22px;
+      background: #fff; border: 1px solid var(--line); width: fit-content; max-width: 100%;
+    }
+    .spec-tabs__btn {
+      padding: 10px 16px; border-radius: 10px;
+      font-size: .86rem; font-weight: 700; color: var(--muted);
+    }
+    .spec-tabs__btn:hover { color: var(--ink); background: var(--accent-50); }
+    .spec-tabs__btn.is-active {
+      background: linear-gradient(135deg, var(--accent-500), var(--accent-700));
+      color: #fff;
+    }
+    .spec-tabs__btn.is-active:hover { color: #fff; background: linear-gradient(135deg, var(--accent-500), var(--accent-700)); }
+    .spec-tabs__panel { display: none; }
+    .spec-tabs__panel.is-active { display: block; }
+    .spec-tabs__panel[hidden] { display: none !important; }
+    .spec-tabs__panel .code-block { margin-bottom: 14px; }
+    .spec-tabs__panel h3 { margin: 0 0 8px; font-size: 1.02rem; }
+    .spec-tabs__panel p { margin: 0 0 12px; color: var(--muted); font-size: .92rem; }
+
+    .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .modes .card h3 { color: var(--accent-700); }
+    .storage-teaser { text-align: center; margin-top: 28px; }
+
     .cta-box {
       text-align: center; padding: 48px 24px; border-radius: 24px;
       background:
@@ -206,7 +232,7 @@
     .footer__copy { padding-top: 18px; border-top: 1px solid #1e293b; color: #64748b; text-align: center; font-size: .82rem; }
 
     @media (max-width: 960px) {
-      .hero__grid, .split, .flow, .footer__grid { grid-template-columns: 1fr; }
+      .hero__grid, .split, .flow, .footer__grid, .modes { grid-template-columns: 1fr; }
       .hero__grid { text-align: center; }
       .hero__lead { margin-inline: auto; }
       .hero__ctas { flex-wrap: wrap; justify-content: center; }
@@ -238,9 +264,10 @@
       <button class="menu-toggle" id="menuToggle" type="button" data-i18n-aria="nav.menu_open" aria-label="Open menu" aria-expanded="false">☰</button>
       <nav class="nav" id="mainNav" data-i18n-aria="nav.main" aria-label="Main">
         <a href="#split" data-i18n="nav.core">Core vs Cloud</a>
-        <a href="#flow" data-i18n="nav.flow">Event flow</a>
+        <a href="developers.html" data-i18n="nav.concept">Concept</a>
+        <a href="storage.html" data-i18n="nav.storage">Storage SPEC</a>
+        <a href="#install" data-i18n="nav.install">Install SPEC</a>
         <a href="#quickstart" data-i18n="nav.quickstart">Quick start</a>
-        <a href="developers.html" data-i18n="nav.developers">Developers</a>
         <a href="manual.html" data-i18n="nav.manual">Manual</a>
         <a href="https://github.com/wbsckt3/medusa-ledger" data-i18n="nav.github">GitHub</a>
         <a class="btn btn--primary nav-cta-mobile" href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="nav.cloud">Cloud product</a>
@@ -264,14 +291,15 @@
           <p class="hero__lead" data-i18n="hero.lead">Append-only SHA-256 ledger so anyone can prove business events — without replacing your ERP.</p>
           <div class="hero__ctas">
             <a class="btn btn--dark btn--lg" href="https://github.com/wbsckt3/medusa-ledger" data-i18n="hero.cta_github">Star on GitHub</a>
-            <a class="btn btn--primary btn--lg" href="developers.html" data-i18n="hero.cta_dev">Developer guide</a>
+            <a class="btn btn--primary btn--lg" href="developers.html" data-i18n="hero.cta_concept">Concept</a>
+            <a class="btn btn--outline btn--lg" href="storage.html" data-i18n="hero.cta_storage">Storage SPEC</a>
             <a class="btn btn--outline btn--lg" href="manual.html" data-i18n="hero.cta_manual">API manual</a>
             <a class="btn btn--outline btn--lg" href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="hero.cta_cloud">Medusa Cloud product</a>
           </div>
           <div class="hero__badges">
             <span class="hero__badge" data-i18n="hero.b1">SHA-256 · append-only</span>
             <span class="hero__badge" data-i18n="hero.b2">Single ledger per instance</span>
-            <span class="hero__badge" data-i18n="hero.b3">docker compose up</span>
+            <span class="hero__badge" data-i18n="hero.b3">npm · Spring · Docker · .NET</span>
           </div>
         </div>
         <div class="hero__visual" aria-hidden="true">
@@ -316,8 +344,109 @@
           <div class="flow__step"><span>5</span><div data-i18n="flow.s5">VERIFY</div></div>
         </div>
         <p style="text-align:center;margin:22px 0 0;">
-          <a class="btn btn--outline" href="developers.html" data-i18n="flow.cta_dev">Open developer guide</a>
+          <a class="btn btn--outline" href="developers.html" data-i18n="flow.cta_dev">Open Concept guide</a>
         </p>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="storage">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="storage.title">Storage SPEC</h2>
+          <p data-i18n="storage.lead">Operational DB is state. Medusa is evidence. The chain lives next to the app — not in the other service’s Mongo.</p>
+        </div>
+        <div class="modes">
+          <article class="card">
+            <h3 data-i18n="storage.m1_title">Embedded</h3>
+            <p data-i18n="storage.m1_text">npm install · FileStore · ./ledger/blocks/*.json</p>
+          </article>
+          <article class="card">
+            <h3 data-i18n="storage.m2_title">Sidecar</h3>
+            <p data-i18n="storage.m2_text">Docker / K8s volume · HTTP append + verify from any language</p>
+          </article>
+          <article class="card">
+            <h3 data-i18n="storage.m3_title">Cloud</h3>
+            <p data-i18n="storage.m3_text">Managed ledger per business unit · backups, anchors, multi-tenant</p>
+          </article>
+        </div>
+        <p class="storage-teaser">
+          <a class="btn btn--primary btn--lg" href="storage.html" data-i18n="storage.cta">Open Storage SPEC</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="install">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="install.title">Install SPEC</h2>
+          <p data-i18n="install.lead">Same protocol. Pick the stack already in the project. Node is the hash reference in v0.1; Spring and .NET talk HTTP to the sidecar.</p>
+        </div>
+        <div data-spec-tabs>
+          <div class="spec-tabs__nav" role="tablist" data-i18n-aria="install.tabs_label" aria-label="Install stack">
+            <button type="button" class="spec-tabs__btn is-active" data-tab="node" data-i18n="install.tab_node">Node npm</button>
+            <button type="button" class="spec-tabs__btn" data-tab="spring" data-i18n="install.tab_spring">Spring Boot</button>
+            <button type="button" class="spec-tabs__btn" data-tab="docker" data-i18n="install.tab_docker">Docker WLL</button>
+            <button type="button" class="spec-tabs__btn" data-tab="dotnet" data-i18n="install.tab_dotnet">.NET stub</button>
+          </div>
+          <div class="spec-tabs__panel is-active" data-panel="node">
+            <h3 data-i18n="install.node_title">Embedded Core in Node</h3>
+            <p data-i18n="install.node_lead">In-process FileStore. No extra container required.</p>
+            <pre class="code-block">npm install @medusa-ledger/core</pre>
+            <pre class="code-block">const { MedusaChain, FileStore } = require("@medusa-ledger/core");
+
+const chain = new MedusaChain(new FileStore("./ledger"), { autoSeal: true });
+
+await chain.appendEvent({
+  eventId: "order-001",
+  eventType: "ORDER_CREATED",
+  payload: { amount: 50000, currency: "COP" }
+});
+
+console.log(await chain.verifyChain());</pre>
+          </div>
+          <div class="spec-tabs__panel" data-panel="spring" hidden>
+            <h3 data-i18n="install.spring_title">Spring Boot HTTP client</h3>
+            <p data-i18n="install.spring_lead">v0.1 starter calls the Docker sidecar. Native Java hash is v1.1.</p>
+            <pre class="code-block">&lt;dependency&gt;
+  &lt;groupId&gt;com.medusa&lt;/groupId&gt;
+  &lt;artifactId&gt;medusa-ledger-client&lt;/artifactId&gt;
+  &lt;version&gt;0.1.0&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+            <pre class="code-block">implementation 'com.medusa:medusa-ledger-client:0.1.0'</pre>
+            <pre class="code-block">var body = """
+  {"eventId":"order-001","eventType":"ORDER_CREATED",
+   "payload":{"amount":50000,"currency":"COP"}}
+  """;
+var req = HttpRequest.newBuilder()
+  .uri(URI.create("http://localhost:8080/api/events"))
+  .header("Content-Type", "application/json")
+  .POST(HttpRequest.BodyPublishers.ofString(body))
+  .build();
+var res = HttpClient.newHttpClient().send(req, HttpResponse.BodyHandlers.ofString());</pre>
+          </div>
+          <div class="spec-tabs__panel" data-panel="docker" hidden>
+            <h3 data-i18n="install.docker_title">Docker white-label sidecar</h3>
+            <p data-i18n="install.docker_lead">Any language posts HTTP. Chain lives on the container volume.</p>
+            <pre class="code-block">git clone https://github.com/wbsckt3/medusa-ledger.git
+cd medusa-ledger
+docker compose up --build</pre>
+            <pre class="code-block">curl -X POST http://localhost:8080/api/events \
+  -H "Content-Type: application/json" \
+  -d '{"eventId":"order-001","eventType":"ORDER_CREATED","payload":{"amount":50000}}'
+
+curl http://localhost:8080/api/verify</pre>
+          </div>
+          <div class="spec-tabs__panel" data-panel="dotnet" hidden>
+            <h3 data-i18n="install.dotnet_title">.NET stub (roadmap)</h3>
+            <p data-i18n="install.dotnet_lead">HTTP client against the sidecar in v0.1. Native NuGet hashes in v1.2. Do not fork SHA-256 until SPEC is frozen.</p>
+            <pre class="code-block">dotnet add package Medusa.Ledger</pre>
+            <pre class="code-block">var client = new MedusaLedgerClient("http://localhost:8080");
+await client.AppendAsync("ORDER_CREATED", "order-001",
+    new { amount = 50000, currency = "COP" });
+var verify = await client.VerifyAsync();
+Console.WriteLine(verify.Valid);</pre>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -325,35 +454,109 @@
       <div class="container">
         <div class="section__head">
           <h2 data-i18n="quickstart.title">Quick start</h2>
-          <p data-i18n="quickstart.lead">Clone, compose, post an event, verify the chain.</p>
+          <p data-i18n="quickstart.lead">Append ORDER_CREATED, then PAYMENT_RECEIVED, then verify. Same two events on every stack.</p>
         </div>
-        <div class="steps-doc">
-          <div class="step-doc">
-            <h3 data-i18n="quickstart.step1">Clone the repository</h3>
-            <pre class="code-block">git clone https://github.com/wbsckt3/medusa-ledger.git
+        <div data-spec-tabs>
+          <div class="spec-tabs__nav" role="tablist" data-i18n-aria="quickstart.tabs_label" aria-label="Quick start stack">
+            <button type="button" class="spec-tabs__btn is-active" data-tab="qs-node" data-i18n="install.tab_node">Node npm</button>
+            <button type="button" class="spec-tabs__btn" data-tab="qs-spring" data-i18n="install.tab_spring">Spring Boot</button>
+            <button type="button" class="spec-tabs__btn" data-tab="qs-docker" data-i18n="install.tab_docker">Docker WLL</button>
+            <button type="button" class="spec-tabs__btn" data-tab="qs-dotnet" data-i18n="install.tab_dotnet">.NET stub</button>
+          </div>
+          <div class="spec-tabs__panel is-active" data-panel="qs-node">
+            <div class="steps-doc">
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.node_s1">Install the Core</h3>
+                <pre class="code-block">npm install @medusa-ledger/core</pre>
+              </div>
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.node_s2">Append two events</h3>
+                <pre class="code-block">const { MedusaChain, FileStore } = require("@medusa-ledger/core");
+const chain = new MedusaChain(new FileStore("./ledger"), { autoSeal: true });
+await chain.appendEvent({ eventId: "order-001", eventType: "ORDER_CREATED",
+  payload: { customerId: "customer-42", amount: 50000, currency: "COP" } });
+await chain.appendEvent({ eventId: "payment-001", eventType: "PAYMENT_RECEIVED",
+  payload: { orderId: "order-001", amount: 50000, currency: "COP" } });</pre>
+              </div>
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.node_s3">Verify the chain</h3>
+                <pre class="code-block">console.log(await chain.verifyChain());
+// { valid: true, message: "Ledger integrity verified" }</pre>
+              </div>
+            </div>
+          </div>
+          <div class="spec-tabs__panel" data-panel="qs-spring" hidden>
+            <div class="steps-doc">
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.spring_s1">Sidecar up, then Maven or Gradle</h3>
+                <pre class="code-block">docker compose up --build
+# pom.xml → com.medusa:medusa-ledger-client:0.1.0</pre>
+              </div>
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.spring_s2">POST events, GET verify</h3>
+                <pre class="code-block">HttpClient.newHttpClient().send(
+  HttpRequest.newBuilder()
+    .uri(URI.create("http://localhost:8080/api/events"))
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(
+      "{\"eventId\":\"order-001\",\"eventType\":\"ORDER_CREATED\",\"payload\":{\"amount\":50000}}"))
+    .build(),
+  HttpResponse.BodyHandlers.ofString());
+
+HttpClient.newHttpClient().send(
+  HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/api/verify")).GET().build(),
+  HttpResponse.BodyHandlers.ofString());</pre>
+              </div>
+            </div>
+          </div>
+          <div class="spec-tabs__panel" data-panel="qs-docker" hidden>
+            <div class="steps-doc">
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.step1">Clone the repository</h3>
+                <pre class="code-block">git clone https://github.com/wbsckt3/medusa-ledger.git
 cd medusa-ledger</pre>
-          </div>
-          <div class="step-doc">
-            <h3 data-i18n="quickstart.step2">Start the stack</h3>
-            <pre class="code-block">docker compose up --build</pre>
-          </div>
-          <div class="step-doc">
-            <h3 data-i18n="quickstart.step3">Append an event</h3>
-            <pre class="code-block">curl -X POST http://localhost:8080/api/events \
+              </div>
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.step2">Start the stack</h3>
+                <pre class="code-block">docker compose up --build</pre>
+              </div>
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.step3">Append an event</h3>
+                <pre class="code-block">curl -X POST http://localhost:8080/api/events \
   -H "Content-Type: application/json" \
   -d '{
     "eventId": "order-001",
     "eventType": "ORDER_CREATED",
     "payload": { "customerId": "customer-42", "amount": 50000, "currency": "COP" }
   }'</pre>
-          </div>
-          <div class="step-doc">
-            <h3 data-i18n="quickstart.step4">Verify integrity</h3>
-            <pre class="code-block">curl http://localhost:8080/api/verify
+              </div>
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.step4">Verify integrity</h3>
+                <pre class="code-block">curl http://localhost:8080/api/verify
 curl http://localhost:8080/api/ledger/show</pre>
+              </div>
+            </div>
+          </div>
+          <div class="spec-tabs__panel" data-panel="qs-dotnet" hidden>
+            <div class="steps-doc">
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.dotnet_s1">Sidecar + stub package</h3>
+                <pre class="code-block">docker compose up --build
+dotnet add package Medusa.Ledger</pre>
+              </div>
+              <div class="step-doc">
+                <h3 data-i18n="quickstart.dotnet_s2">Append and verify</h3>
+                <pre class="code-block">var client = new MedusaLedgerClient("http://localhost:8080");
+await client.AppendAsync("ORDER_CREATED", "order-001",
+    new { amount = 50000, currency = "COP" });
+await client.AppendAsync("PAYMENT_RECEIVED", "payment-001",
+    new { orderId = "order-001", amount = 50000 });
+Console.WriteLine((await client.VerifyAsync()).Valid);</pre>
+              </div>
+            </div>
           </div>
         </div>
-        <p class="note" data-i18n="quickstart.note">Core v0.1 is on the main branch of this repo. Landing docs stay on gh-pages.</p>
+        <p class="note" data-i18n="quickstart.note">Core v0.1 lives on main. Node hashes are canonical; Spring and .NET use the Docker sidecar until native SPEC hashes ship.</p>
       </div>
     </section>
 
@@ -373,7 +576,17 @@ curl http://localhost:8080/api/ledger/show</pre>
       <div class="container">
         <div class="section__head">
           <h2 data-i18n="sponsors.title">GitHub Sponsors</h2>
-          <p data-i18n="sponsors.lead">Support Core maintenance. Sponsors fund discovery and roadmap.</p>
+          <p data-i18n="sponsors.lead">Core is open; Cloud is managed. Sponsors fund discovery and roadmap — not a back door into multi-tenant, payment hubs, or SLA.</p>
+        </div>
+        <div class="split" style="margin-bottom:28px;">
+          <article class="card card--oss">
+            <h3 data-i18n="sponsors.community_title">Community · $0</h3>
+            <p data-i18n="sponsors.community_text">Medusa Core: blocks, hashes, events, verify, Docker, NPM, docs. Run the ledger on your disk.</p>
+          </article>
+          <article class="card card--cloud">
+            <h3 data-i18n="sponsors.cloud_title">Cloud / Business / Enterprise</h3>
+            <p data-i18n="sponsors.cloud_text">Hosted ledgers per unit, white-label, payment anchors, analytics, ERP connectors, SLA.</p>
+          </article>
         </div>
         <div style="text-align:center;">
           <a class="btn btn--primary btn--lg" href="https://github.com/sponsors/wbsckt3" data-i18n="sponsors.cta">Become a sponsor</a>
@@ -405,9 +618,11 @@ curl http://localhost:8080/api/ledger/show</pre>
         <div>
           <h4 data-i18n="footer.links">Links</h4>
           <ul>
+            <li><a href="developers.html" data-i18n="footer.concept">Concept</a></li>
+            <li><a href="storage.html" data-i18n="footer.storage">Storage SPEC</a></li>
             <li><a href="manual.html" data-i18n="footer.manual">Manual</a></li>
-            <li><a href="developers.html">Developer guide</a></li>
             <li><a href="https://github.com/wbsckt3/medusa-ledger" data-i18n="footer.github">Repository</a></li>
+            <li><a href="https://github.com/sponsors/wbsckt3" data-i18n="footer.sponsors">Sponsors</a></li>
             <li><a href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="footer.cloud">Cloud product</a></li>
           </ul>
         </div>
@@ -419,6 +634,7 @@ curl http://localhost:8080/api/ledger/show</pre>
   <script src="https://unpkg.com/i18next@23.4.6/i18next.min.js"></script>
   <script src="scripts/locales-embed.js"></script>
   <script src="scripts/i18n.js"></script>
+  <script src="scripts/spec-tabs.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
     const header = document.getElementById('header');

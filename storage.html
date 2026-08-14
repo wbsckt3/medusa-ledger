@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Storage SPEC — Medusa Ledger OSS: operational DB vs ledger, FileStore, Node append / Spring verify, three storage modes." />
+  <meta name="theme-color" content="#c2410c" />
+  <title>Storage SPEC — Medusa Ledger OSS</title>
+  <link rel="icon" href="assets/medusa-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0a0a0a; --muted: #475569; --accent: #c2410c; --accent-soft: #fff7ed;
+      --accent-200: #fed7aa; --line: #e2e8f0; --bg: #f8fafc; --code: #0a0a0a;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      color: var(--ink); background: var(--bg); line-height: 1.55;
+    }
+    code, pre { font-family: var(--mono); }
+    a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    .toolbar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+      padding: 12px 20px; background: #fff; border-bottom: 1px solid var(--line);
+    }
+    .toolbar__brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--ink); text-decoration: none; }
+    .toolbar__brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+      border-radius: 12px; font-weight: 700; font-size: .92rem; text-decoration: none;
+      background: var(--accent); color: #fff !important;
+    }
+    .btn--ghost { background: #fff; color: var(--ink) !important; border: 1px solid var(--line); }
+    .wrap { width: min(900px, calc(100% - 32px)); margin: 32px auto 64px; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.6rem, 3vw, 2.1rem); letter-spacing: -.02em; }
+    .lead { margin: 0 0 20px; color: var(--muted); font-size: 1.05rem; }
+    .hook {
+      padding: 16px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line);
+      font-weight: 700; font-size: 1.02rem; margin-bottom: 28px;
+    }
+    h2 { margin: 36px 0 12px; font-size: 1.22rem; padding-top: 8px; border-top: 1px solid var(--line); }
+    h3 { margin: 20px 0 8px; font-size: 1.02rem; }
+    p, li { color: var(--muted); }
+    ul { padding-left: 1.2rem; }
+    .toc {
+      padding: 16px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line);
+      margin-bottom: 28px;
+    }
+    .toc strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .toc a { display: block; margin: 4px 0; }
+    pre {
+      margin: 12px 0; padding: 14px 16px; border-radius: 12px; background: var(--code);
+      color: #e2e8f0; font-size: .84rem; overflow-x: auto; line-height: 1.5;
+    }
+    .diagram {
+      white-space: pre; font-family: var(--mono); font-size: .8rem; background: #fff;
+      border: 1px solid var(--line); border-radius: 14px; padding: 16px; overflow-x: auto; color: #0f172a;
+    }
+    .callout {
+      padding: 14px 16px; border-radius: 12px; background: var(--accent-soft);
+      border: 1px solid var(--accent-200); color: #9a3412; font-weight: 600; margin: 16px 0;
+    }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; margin: 12px 0 20px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: .92rem; }
+    th { background: #fff7ed; color: var(--ink); }
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 20px; }
+    .compare article {
+      padding: 16px 18px; border-radius: 14px; background: #fff; border: 1px solid var(--line);
+    }
+    .compare h3 { margin: 0 0 8px; }
+    .compare--accent { border-color: var(--accent-200); background: var(--accent-soft); }
+    .footer-note { margin-top: 40px; font-size: .88rem; color: #94a3b8; }
+    @media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <a class="toolbar__brand" href="index.html">
+      <img src="assets/medusa-logo.png" alt="" width="32" height="32" />
+      <span>Medusa Ledger · Storage SPEC</span>
+    </a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a class="btn btn--ghost" href="index.html">← Landing</a>
+      <a class="btn btn--ghost" href="developers.html">Concept</a>
+      <a class="btn btn--ghost" href="manual.html">API manual</a>
+      <a class="btn" href="https://github.com/wbsckt3/medusa-ledger">GitHub</a>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <h1>Storage SPEC</h1>
+    <p class="lead">Operational data and cryptographic evidence are two different stores. Medusa does not replace MongoDB, PostgreSQL, or the ERP. It records facts that can be verified later — on disk the developer owns.</p>
+    <p class="hook">Your data stays yours. Your ledger stays yours. Medusa provides the protocol and verification.</p>
+
+    <nav class="toc">
+      <strong>Contents</strong>
+      <a href="#db-vs-ledger">1. Operational DB vs ledger</a>
+      <a href="#where">2. Where the chain lives</a>
+      <a href="#node-spring">3. Node appends, Spring verifies</a>
+      <a href="#payment-flow">4. Payment flow (state, then evidence)</a>
+      <a href="#no-duplicate">5. The ledger is not a full DB copy</a>
+      <a href="#payload-hash">6. payloadHash without sensitive fields</a>
+      <a href="#anchor">7. Hash-linked chain vs public anchor</a>
+      <a href="#one-chain">8. One chain per business unit</a>
+      <a href="#modes">9. Three storage modes</a>
+      <a href="#protocol">10. append() / verify() protocol</a>
+    </nav>
+
+    <h2 id="db-vs-ledger">1. Operational DB vs ledger</h2>
+    <p>A business unit already has a database. That store answers <em>what is the current state</em>. Medusa answers a different question: <em>which facts were recorded, and can they be shown unaltered?</em></p>
+    <div class="diagram">          BUSINESS UNIT
+                 │
+   ┌─────────────┴─────────────┐
+   │                           │
+Operational database      MEDUSA LEDGER
+   │                           │
+Mongo / Postgres           append-only
+   │                           │
+current state              evidence</div>
+    <div class="compare">
+      <article>
+        <h3>Operational DB</h3>
+        <p>Collections such as users, orders, payments, settlements. A row can be updated. Example:</p>
+<pre>{
+  "paymentId": "P-100",
+  "amount": 50000,
+  "status": "PAID"
+}</pre>
+      </article>
+      <article class="compare--accent">
+        <h3>Medusa</h3>
+        <p>An event plus hashes. History is not rewritten in place:</p>
+<pre>PAYMENT_RECEIVED
+amount: 50000
+timestamp: …
+hash: ABC…
+previousHash: XYZ…</pre>
+      </article>
+    </div>
+    <p>MongoDB (or any ERP store) is <strong>state</strong>. Medusa is <strong>evidence</strong>. That split is the product, not an implementation detail.</p>
+
+    <h2 id="where">2. Where the chain lives</h2>
+    <p>The ledger does not have to sit in the same MongoDB as the application. The Core must not require that database. OSS storage is independent:</p>
+<pre>medusa/
+│
+├── ledger/
+│   ├── blocks/
+│   │   ├── 000001.json
+│   │   ├── 000002.json
+│   │   └── …
+│   └── metadata.json</pre>
+    <p>FileStore is the v0.1 default. SQLite, PostgreSQL, or a later distributed backend can hold the same protocol. A Docker demo can boot with only:</p>
+    <div class="diagram">Docker
+  └── Medusa
+        └── ledger/blocks</div>
+    <p>No operational Mongo is required to try the SPEC.</p>
+
+    <h2 id="node-spring">3. Node appends, Spring verifies</h2>
+    <p>Two services can share one ledger without sharing one database. Node does not write Spring’s Mongo, and Spring does not open Node’s collections. Both speak the Medusa protocol.</p>
+    <div class="diagram">                 COMPANY
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+     Node service        Spring service
+     (Payments)          (Accounting)
+          │                   │
+          └─────────┬─────────┘
+                    │
+                MEDUSA
+                    │
+                 Ledger</div>
+    <p>Node records <code>PAYMENT_RECEIVED</code>. Spring later asks whether that event exists. Medusa answers: event present, hash valid, chain valid. Spring never enters the payments database.</p>
+<pre>// Node — append
+await ledger.append({
+  eventId: "PAY-100",
+  eventType: "PAYMENT_RECEIVED",
+  payload: { amount: 50000, currency: "COP" }
+});
+
+// Spring — verify (HTTP sidecar in v0.1)
+GET http://localhost:8080/api/verify
+→ { "valid": true, "blocks": 3, "message": "Ledger integrity verified" }</pre>
+    <div class="callout">“Node emits, Spring verifies” does not mean Node → Mongo → Spring → Mongo. It means both clients know append() and verify() against the same chain.</div>
+
+    <h2 id="payment-flow">4. Payment flow (state, then evidence)</h2>
+    <p>When a customer pays, the application still writes operational state first, then appends cryptographic evidence. Two records exist on purpose:</p>
+    <div class="diagram">         PAYMENT
+            │
+            ▼
+     Operational DB
+      status = PAID
+            │
+            ▼
+         MEDUSA
+            │
+            ▼
+        BLOCK #42
+        SHA-256(…)</div>
+<pre>// 1) State — your app / ERP
+db.payments.updateOne(
+  { _id: "P-100" },
+  { $set: { status: "PAID", amount: 50000 } }
+);
+
+// 2) Evidence — Medusa
+await ledger.append({
+  eventId: "PAY-100",
+  eventType: "PAYMENT_RECEIVED",
+  aggregateId: "ORDER-900",
+  payload: { amount: 50000, currency: "COP" }
+});</pre>
+    <p>Operational store: “payment P-100 is PAID.” Ledger: “event PAYMENT_RECEIVED occurred, and this is the hash proof.”</p>
+
+    <h2 id="no-duplicate">5. The ledger is not a full DB copy</h2>
+    <p>Do not dump the entire operational document into Medusa. Register only what later proof requires:</p>
+<pre>{
+  "eventId": "PAY-100",
+  "eventType": "PAYMENT_RECEIVED",
+  "aggregateId": "ORDER-900",
+  "timestamp": "2026-08-14T12:00:00.000Z",
+  "amount": 50000,
+  "currency": "COP"
+}</pre>
+    <p>That is a fact, not a replica of the ERP schema. Users, cards, addresses, and internal flags stay in the business database.</p>
+
+    <h2 id="payload-hash">6. payloadHash without sensitive fields</h2>
+    <p>A stricter option stores only a hash of the operational document. Medusa never needs the card number or customer name:</p>
+    <div class="compare">
+      <article>
+        <h3>In the ERP / Mongo</h3>
+<pre>{
+  "_id": "PAY-100",
+  "customer": "…",
+  "card": "…",
+  "amount": 50000,
+  "currency": "COP",
+  "status": "PAID"
+}</pre>
+      </article>
+      <article class="compare--accent">
+        <h3>In Medusa</h3>
+<pre>{
+  "eventId": "PAY-100",
+  "eventType": "PAYMENT_RECEIVED",
+  "aggregateId": "PAY-100",
+  "payloadHash": "a91f8…",
+  "timestamp": "…"
+}</pre>
+      </article>
+    </div>
+<pre>const crypto = require("crypto");
+const canonical = JSON.stringify(doc, Object.keys(doc).sort());
+const payloadHash = crypto.createHash("sha256").update(canonical).digest("hex");
+
+await ledger.append({
+  eventId: "PAY-100",
+  eventType: "PAYMENT_RECEIVED",
+  payloadHash
+});</pre>
+    <p>Later verification: the document shown today hashes to the same digest that was sealed when the event was appended — without Medusa holding PII.</p>
+    <div class="callout">SPEC v0.1: <code>payloadHash = SHA256(canonicalJSON(payload))</code>. Object keys sorted lexicographically. Node Core is the reference hash implementation; Spring and .NET talk HTTP to the sidecar until native hashes land in v1.1+.</div>
+
+    <h2 id="anchor">7. Hash-linked chain vs public anchor</h2>
+    <p>The OSS ledger is a <strong>hash-linked</strong> chain. That is not the same as a public blockchain network.</p>
+    <div class="diagram">YOUR APP
+  ├── Operational DB
+  └── Medusa Ledger
+         ├── Block
+         ├── Block
+         └── Block     ← hash-linked (OSS)
+
+Medusa Ledger
+       │  periodically (optional, Cloud)
+       ▼
+External Anchor
+       │
+       ▼
+Public blockchain / timestamp service</div>
+    <p>Local proof: SHA-256 + <code>previousHash</code>. External proof: an optional later anchor. v0.1 documents the hook; it does not require a public chain to be useful.</p>
+    <table>
+      <thead>
+        <tr><th>Layer</th><th>Question it answers</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Operational DB</td><td>Current business state</td></tr>
+        <tr><td>Medusa hash chain</td><td>Recorded facts, locally verifiable</td></tr>
+        <tr><td>Public anchor (optional)</td><td>Third-party timestamp of a tip hash</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="one-chain">8. One chain per business unit</h2>
+    <p>Do not centralize every tenant into one OSS file. Each unit keeps its operational database and its own ledger:</p>
+    <div class="diagram">                 MEDUSA SPEC
+                      │
+        ┌─────────────┼─────────────┐
+        │             │             │
+     Unit A        Unit B        Unit C
+        │             │             │
+     Ledger        Ledger        Ledger
+        │             │             │
+     Mongo         Postgres      Mongo</div>
+    <p>A platform can later query or verify those ledgers. The OSS promise stays: one chain per unit, data on that unit’s disk.</p>
+
+    <h2 id="modes">9. Three storage modes</h2>
+    <table>
+      <thead>
+        <tr><th>Mode</th><th>Who</th><th>Where the chain lives</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Embedded</strong></td><td><code>npm install @medusa-ledger/core</code></td><td><code>./ledger/blocks/*.json</code> (FileStore)</td></tr>
+        <tr><td><strong>Sidecar</strong></td><td>Docker / Kubernetes / any language</td><td>container volume + HTTP API</td></tr>
+        <tr><td><strong>Cloud</strong></td><td>P2L n-1-n / Medusa Cloud</td><td>managed store per tenant</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Embedded (Node)</h3>
+    <div class="diagram">Node application
+  └── Medusa SDK
+        └── ./ledger</div>
+<pre>const { MedusaChain, FileStore } = require("@medusa-ledger/core");
+const chain = new MedusaChain(new FileStore("./ledger"), { autoSeal: true });
+await chain.appendEvent({
+  eventId: "order-001",
+  eventType: "ORDER_CREATED",
+  payload: { amount: 50000, currency: "COP" }
+});
+console.log(await chain.verifyChain());</pre>
+
+    <h3>Sidecar (Docker / K8s)</h3>
+    <div class="diagram">Any application
+       │
+       ▼
+  localhost:8080
+       │
+       ▼
+Medusa container
+       │
+       ▼
+    Ledger volume</div>
+<pre>docker compose up --build
+curl -X POST http://localhost:8080/api/events \
+  -H "Content-Type: application/json" \
+  -d '{"eventId":"order-001","eventType":"ORDER_CREATED","payload":{"amount":50000}}'</pre>
+
+    <h3>Cloud (managed)</h3>
+    <div class="diagram">              Medusa Cloud
+                   │
+        ┌──────────┼──────────┐
+        │          │          │
+     Tenant A   Tenant B   Tenant C
+        │          │          │
+     Ledger     Ledger     Ledger</div>
+    <p>Cloud is the commercial product: backups, observability, payment anchors, multi-unit administration. The OSS layout stays local:</p>
+<pre>my-app/
+├── database/     ← operational
+└── medusa/
+    └── ledger/   ← evidence</pre>
+
+    <h2 id="protocol">10. append() / verify() protocol</h2>
+    <p>Every stack implements the same two verbs. Each service may keep its own database and its own job (payments vs accounting). The shared contract is the ledger protocol, not a shared Mongo.</p>
+    <div class="diagram">              MEDUSA LEDGER
+                   ▲
+                   │
+          ┌────────┴────────┐
+          │                 │
+     Node service      Spring service
+          │                 │
+       append()          verify()</div>
+<pre>POST /api/events
+{
+  "eventId": "order-001",
+  "eventType": "ORDER_CREATED",
+  "payload": { "customerId": "customer-42", "amount": 50000, "currency": "COP" }
+}
+
+GET /api/verify
+{ "valid": true, "blocks": 3, "message": "Ledger integrity verified" }
+
+# Tamper a stored amount →
+{ "valid": false, "block": 2, "reason": "Hash mismatch" }</pre>
+    <p>Idempotence: the same <code>eventId</code> must not create a second block. Canonical event → canonical JSON → SHA-256 → block → chain. See <a href="https://github.com/wbsckt3/medusa-ledger/blob/main/SPEC.md">SPEC.md</a> for hash rules. Node is the reference implementation in v0.1; Spring Boot and .NET clients call the Docker sidecar over HTTP.</p>
+    <div class="callout">Install Medusa with Docker or NPM, keep the operational database beside <code>medusa/ledger/</code>, and verify from any stack that speaks the protocol — without a central Medusa database.</div>
+
+    <p class="footer-note">Storage SPEC · Medusa Ledger OSS · <a href="index.html">Landing</a> · <a href="developers.html">Concept</a> · <a href="manual.html">API manual</a></p>
+  </main>
+</body>
+</html>

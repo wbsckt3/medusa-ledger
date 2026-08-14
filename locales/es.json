@@ -1,12 +1,15 @@
 {
   "meta": {
     "title": "Medusa Ledger — Open Source Trust Ledger for Business",
-    "description": "Ledger open source de confianza empresarial para eventos financieros y operativos verificables. SHA-256, append-only, quick start con Docker."
+    "description": "Ledger open source de confianza empresarial para eventos verificables. SPEC multi-stack: Node npm, Spring Boot, Docker WLL. SHA-256, append-only."
   },
   "nav": {
     "home": "Medusa Ledger inicio",
     "core": "Core vs Cloud",
     "flow": "Flujo de eventos",
+    "concept": "Concept",
+    "storage": "Storage SPEC",
+    "install": "Install SPEC",
     "quickstart": "Quick start",
     "manual": "Manual",
     "developers": "Developers",
@@ -21,20 +24,22 @@
   "hero": {
     "eyebrow": "Open Source · Apache-2.0",
     "title": "Medusa Ledger — <em>Open Source Trust Ledger</em> for Business",
-    "lead": "Ledger append-only con SHA-256 para que cualquiera pueda demostrar eventos de negocio — sin reemplazar el ERP.",
+    "lead": "Ledger append-only con SHA-256 para demostrar eventos de negocio — sin reemplazar el ERP. Tú defines el evento. Medusa lo hace verificable.",
     "cta_github": "Star en GitHub",
     "cta_dev": "Guía para developers",
+    "cta_concept": "Concept",
+    "cta_storage": "Storage SPEC",
     "cta_manual": "Manual API",
     "cta_cloud": "Producto Medusa Cloud",
     "b1": "SHA-256 · append-only",
     "b2": "1 ledger por instancia",
-    "b3": "docker compose up"
+    "b3": "npm · Spring · Docker · .NET"
   },
   "split": {
     "title": "Core vs Cloud",
-    "lead": "Abrimos el motor. Lo multi-tenant y de negocio queda comercial.",
+    "lead": "El motor es abierto. Lo multi-tenant y de negocio queda comercial.",
     "oss_title": "Medusa Core (OSS)",
-    "oss_text": "Bloques, hashes, eventos, verify, API básica, Docker, SDK, docs. Gratis para correr en local.",
+    "oss_text": "Bloques, hashes, eventos, verify, API, Docker, SDK, docs. Gratis para correr en local.",
     "cloud_title": "Medusa Cloud",
     "cloud_text": "Multi-tenant / white-label, anclas de pago, hubs analytics, SLA, conectores ERP, hosting."
   },
@@ -46,16 +51,52 @@
     "s3": "SHA-256",
     "s4": "BLOQUE",
     "s5": "VERIFY",
-    "cta_dev": "Abrir guía para developers"
+    "cta_dev": "Abrir guía Concept"
+  },
+  "storage": {
+    "title": "Storage SPEC",
+    "lead": "La BD operativa es estado. Medusa es evidencia. La cadena vive junto a la app — no en el Mongo del otro servicio.",
+    "m1_title": "Embedded",
+    "m1_text": "npm install · FileStore · ./ledger/blocks/*.json",
+    "m2_title": "Sidecar",
+    "m2_text": "Volumen Docker / K8s · HTTP append + verify desde cualquier lenguaje",
+    "m3_title": "Cloud",
+    "m3_text": "Ledger administrado por unidad de negocio · backups, anclas, multi-tenant",
+    "cta": "Abrir Storage SPEC"
+  },
+  "install": {
+    "title": "Install SPEC",
+    "lead": "El mismo protocolo. Elige el stack que ya usa el proyecto. Node es la referencia de hash en v0.1; Spring y .NET hablan HTTP al sidecar.",
+    "tabs_label": "Stack de instalación",
+    "tab_node": "Node npm",
+    "tab_spring": "Spring Boot",
+    "tab_docker": "Docker WLL",
+    "tab_dotnet": ".NET stub",
+    "node_title": "Core embebido en Node",
+    "node_lead": "FileStore en proceso. No hace falta un contenedor extra.",
+    "spring_title": "Cliente HTTP Spring Boot",
+    "spring_lead": "El starter v0.1 llama al sidecar Docker. Hash nativo en Java: v1.1.",
+    "docker_title": "Sidecar Docker white-label",
+    "docker_lead": "Cualquier lenguaje hace POST HTTP. La cadena vive en el volumen del contenedor.",
+    "dotnet_title": ".NET stub (roadmap)",
+    "dotnet_lead": "Cliente HTTP contra el sidecar en v0.1. Hashes nativos en NuGet: v1.2. No ramificar SHA-256 hasta congelar el SPEC."
   },
   "quickstart": {
     "title": "Quick start",
-    "lead": "Clona, levanta compose, publica un evento y verifica la cadena.",
+    "lead": "Ancla ORDER_CREATED, luego PAYMENT_RECEIVED, luego verify. Los mismos dos eventos en cada stack.",
+    "tabs_label": "Stack de quick start",
     "step1": "Clona el repositorio",
     "step2": "Levanta el stack",
     "step3": "Ancla un evento",
     "step4": "Verifica integridad",
-    "note": "El Core v0.1 está en main. El demo coincide con docker compose + curl / CLI de la guía para developers."
+    "node_s1": "Instala el Core",
+    "node_s2": "Ancla dos eventos",
+    "node_s3": "Verifica la cadena",
+    "spring_s1": "Sidecar arriba, luego Maven o Gradle",
+    "spring_s2": "POST eventos, GET verify",
+    "dotnet_s1": "Sidecar + paquete stub",
+    "dotnet_s2": "Append y verify",
+    "note": "El Core v0.1 está en main. Los hashes de Node son canónicos; Spring y .NET usan el sidecar Docker hasta que existan hashes nativos del SPEC."
   },
   "manual_teaser": {
     "title": "Manual de uso",
@@ -64,7 +105,11 @@
   },
   "sponsors": {
     "title": "GitHub Sponsors",
-    "lead": "Apoya el mantenimiento del Core. Sponsors financian descubrimiento y roadmap; Cloud/Enterprise sigue siendo el camino comercial.",
+    "lead": "El Core es abierto; Cloud es administrado. Sponsors financian descubrimiento y roadmap — no es una puerta trasera a multi-tenant, hubs de pago ni SLA.",
+    "community_title": "Community · $0",
+    "community_text": "Medusa Core: bloques, hashes, eventos, verify, Docker, NPM, docs. El ledger corre en tu disco.",
+    "cloud_title": "Cloud / Business / Enterprise",
+    "cloud_text": "Ledgers hospedados por unidad, white-label, anclas de pago, analytics, conectores ERP, SLA.",
     "cta": "Convertirse en sponsor"
   },
   "cta": {
@@ -76,8 +121,11 @@
   "footer": {
     "blurb": "Medusa Ledger — infraestructura open source de confianza para eventos de negocio verificables.",
     "links": "Enlaces",
+    "concept": "Concept",
+    "storage": "Storage SPEC",
     "manual": "Manual",
     "github": "Repositorio",
+    "sponsors": "Sponsors",
     "cloud": "Producto Cloud",
     "copy": "Medusa Ledger · Open Source · Powered by P2L"
   }

@@ -1,12 +1,15 @@
 {
   "meta": {
     "title": "Medusa Ledger — Open Source Trust Ledger for Business",
-    "description": "Open source business trust ledger for verifiable financial and operational events. SHA-256, append-only, Docker quick start."
+    "description": "Open source business trust ledger for verifiable events. Multi-stack SPEC: Node npm, Spring Boot, Docker WLL. SHA-256, append-only."
   },
   "nav": {
     "home": "Medusa Ledger home",
     "core": "Core vs Cloud",
     "flow": "Event flow",
+    "concept": "Concept",
+    "storage": "Storage SPEC",
+    "install": "Install SPEC",
     "quickstart": "Quick start",
     "manual": "Manual",
     "developers": "Developers",
@@ -21,14 +24,16 @@
   "hero": {
     "eyebrow": "Open Source · Apache-2.0",
     "title": "Medusa Ledger — <em>Open Source Trust Ledger</em> for Business",
-    "lead": "Append-only SHA-256 ledger so anyone can prove business events — without replacing your ERP.",
+    "lead": "Append-only SHA-256 ledger so anyone can prove business events — without replacing the ERP. You define the event. Medusa makes it verifiable.",
     "cta_github": "Star on GitHub",
     "cta_dev": "Developer guide",
+    "cta_concept": "Concept",
+    "cta_storage": "Storage SPEC",
     "cta_manual": "API manual",
     "cta_cloud": "Medusa Cloud product",
     "b1": "SHA-256 · append-only",
     "b2": "Single ledger per instance",
-    "b3": "docker compose up"
+    "b3": "npm · Spring · Docker · .NET"
   },
   "split": {
     "title": "Core vs Cloud",
@@ -46,16 +51,52 @@
     "s3": "SHA-256",
     "s4": "BLOCK",
     "s5": "VERIFY",
-    "cta_dev": "Open developer guide"
+    "cta_dev": "Open Concept guide"
+  },
+  "storage": {
+    "title": "Storage SPEC",
+    "lead": "Operational DB is state. Medusa is evidence. The chain lives next to the app — not in the other service’s Mongo.",
+    "m1_title": "Embedded",
+    "m1_text": "npm install · FileStore · ./ledger/blocks/*.json",
+    "m2_title": "Sidecar",
+    "m2_text": "Docker / K8s volume · HTTP append + verify from any language",
+    "m3_title": "Cloud",
+    "m3_text": "Managed ledger per business unit · backups, anchors, multi-tenant",
+    "cta": "Open Storage SPEC"
+  },
+  "install": {
+    "title": "Install SPEC",
+    "lead": "Same protocol. Pick the stack already in the project. Node is the hash reference in v0.1; Spring and .NET talk HTTP to the sidecar.",
+    "tabs_label": "Install stack",
+    "tab_node": "Node npm",
+    "tab_spring": "Spring Boot",
+    "tab_docker": "Docker WLL",
+    "tab_dotnet": ".NET stub",
+    "node_title": "Embedded Core in Node",
+    "node_lead": "In-process FileStore. No extra container required.",
+    "spring_title": "Spring Boot HTTP client",
+    "spring_lead": "v0.1 starter calls the Docker sidecar. Native Java hash is v1.1.",
+    "docker_title": "Docker white-label sidecar",
+    "docker_lead": "Any language posts HTTP. Chain lives on the container volume.",
+    "dotnet_title": ".NET stub (roadmap)",
+    "dotnet_lead": "HTTP client against the sidecar in v0.1. Native NuGet hashes in v1.2. Do not fork SHA-256 until SPEC is frozen."
   },
   "quickstart": {
     "title": "Quick start",
-    "lead": "Clone, compose, post an event, verify the chain.",
+    "lead": "Append ORDER_CREATED, then PAYMENT_RECEIVED, then verify. Same two events on every stack.",
+    "tabs_label": "Quick start stack",
     "step1": "Clone the repository",
     "step2": "Start the stack",
     "step3": "Append an event",
     "step4": "Verify integrity",
-    "note": "Core v0.1 is on the main branch. Demo matches docker compose + curl / CLI from the developer guide."
+    "node_s1": "Install the Core",
+    "node_s2": "Append two events",
+    "node_s3": "Verify the chain",
+    "spring_s1": "Sidecar up, then Maven or Gradle",
+    "spring_s2": "POST events, GET verify",
+    "dotnet_s1": "Sidecar + stub package",
+    "dotnet_s2": "Append and verify",
+    "note": "Core v0.1 lives on main. Node hashes are canonical; Spring and .NET use the Docker sidecar until native SPEC hashes ship."
   },
   "manual_teaser": {
     "title": "Usage manual",
@@ -64,7 +105,11 @@
   },
   "sponsors": {
     "title": "GitHub Sponsors",
-    "lead": "Support Core maintenance. Sponsors fund discovery and roadmap — Cloud/Enterprise remain the commercial path.",
+    "lead": "Core is open; Cloud is managed. Sponsors fund discovery and roadmap — not a back door into multi-tenant, payment hubs, or SLA.",
+    "community_title": "Community · $0",
+    "community_text": "Medusa Core: blocks, hashes, events, verify, Docker, NPM, docs. Run the ledger on your disk.",
+    "cloud_title": "Cloud / Business / Enterprise",
+    "cloud_text": "Hosted ledgers per unit, white-label, payment anchors, analytics, ERP connectors, SLA.",
     "cta": "Become a sponsor"
   },
   "cta": {
@@ -76,8 +121,11 @@
   "footer": {
     "blurb": "Medusa Ledger — open source trust infrastructure for verifiable business events.",
     "links": "Links",
+    "concept": "Concept",
+    "storage": "Storage SPEC",
     "manual": "Manual",
     "github": "Repository",
+    "sponsors": "Sponsors",
     "cloud": "Cloud product",
     "copy": "Medusa Ledger · Open Source · Powered by P2L"
   }
