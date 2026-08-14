@@ -22,6 +22,41 @@ function send(res, status, body) {
   res.end(raw);
 }
 
+function formatEventResponse(out) {
+  const tx = out.transaction || {};
+  const block = out.block;
+  return {
+    success: true,
+    duplicate: Boolean(out.duplicate),
+    eventId: tx.eventId,
+    eventType: tx.eventType,
+    block: block ? block.index : tx.blockIndex,
+    hash: block ? block.hash : tx.payloadHash,
+    transaction: tx,
+    sealedBlock: block || null
+  };
+}
+
+async function formatLedgerShow(chain) {
+  const blocks = await chain.listBlocks({ limit: 200 });
+  const asc = [...blocks].sort((a, b) => a.index - b.index);
+  const lines = ['MEDUSA LEDGER', ''];
+  for (const b of asc) {
+    const txs = await chain.listTransactions({ blockIndex: b.index, limit: 20 });
+    lines.push(`Block #${b.index}`);
+    if (b.index === 0) lines.push('GENESIS');
+    else if (txs[0]) lines.push(`${txs[0].eventType}  eventId: ${txs[0].eventId}`);
+    lines.push(`previousHash: ${String(b.previousHash).slice(0, 12)}...`);
+    lines.push(`hash: ${String(b.hash).slice(0, 12)}...`);
+    lines.push('');
+    lines.push('        ↓');
+    lines.push('');
+  }
+  const verify = await chain.verifyChain();
+  lines.push(verify.valid ? '✓ CHAIN VALID' : `✗ CHAIN INVALID (${verify.reason || verify.error})`);
+  return { valid: verify.valid, blocks: asc.length, text: lines.join('\n'), verify };
+}
+
 function createServer(chain) {
   return http.createServer(async (req, res) => {
     try {
@@ -47,8 +82,11 @@ function createServer(chain) {
           })
         });
       }
-      if (method === 'GET' && path === '/api/verify') {
+      if (method === 'GET' && (path === '/api/verify' || path === '/api/ledger/verify')) {
         return send(res, 200, await chain.verifyChain());
+      }
+      if (method === 'GET' && (path === '/api/ledger' || path === '/api/ledger/show')) {
+        return send(res, 200, await formatLedgerShow(chain));
       }
       if (method === 'POST' && path === '/api/seal') {
         const body = await readJson(req);
@@ -58,10 +96,10 @@ function createServer(chain) {
         const body = await readJson(req);
         try {
           const out = await chain.appendEvent(body || {});
-          return send(res, out.duplicate ? 200 : 201, out);
+          return send(res, out.duplicate ? 200 : 201, formatEventResponse(out));
         } catch (e) {
           const status = e.code === 'EVENT_ID_REQUIRED' ? 400 : 500;
-          return send(res, status, { error: e.code || 'SERVER_ERROR', message: e.message });
+          return send(res, status, { success: false, error: e.code || 'SERVER_ERROR', message: e.message });
         }
       }
       return send(res, 404, { error: 'NOT_FOUND' });
@@ -85,4 +123,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { createServer, main };
+module.exports = { createServer, main, formatEventResponse, formatLedgerShow };

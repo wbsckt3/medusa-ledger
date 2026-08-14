@@ -181,15 +181,28 @@ class MedusaChain {
 
   async verifyChain() {
     const blocks = await this.store.listBlocksAsc();
-    if (!blocks.length) return { valid: false, error: 'NO_BLOCKS' };
+    if (!blocks.length) {
+      return { valid: false, blocks: 0, error: 'NO_BLOCKS', reason: 'NO_BLOCKS', message: 'No blocks in ledger' };
+    }
 
     for (let i = 0; i < blocks.length; i++) {
       const b = blocks[i];
-      if (b.index !== i) return { valid: false, error: 'INDEX_GAP', at: b.index };
+      if (b.index !== i) {
+        return { valid: false, blocks: blocks.length, block: b.index, error: 'INDEX_GAP', reason: 'INDEX_GAP', message: 'Index gap in chain' };
+      }
       if (i === 0) {
-        if (b.previousHash !== '0') return { valid: false, error: 'GENESIS_PREV', at: 0 };
+        if (b.previousHash !== '0') {
+          return { valid: false, blocks: blocks.length, block: 0, error: 'GENESIS_PREV', reason: 'GENESIS_PREV', message: 'Invalid genesis previousHash' };
+        }
       } else if (b.previousHash !== blocks[i - 1].hash) {
-        return { valid: false, error: 'PREV_HASH_MISMATCH', at: b.index };
+        return {
+          valid: false,
+          blocks: blocks.length,
+          block: b.index,
+          error: 'PREV_HASH_MISMATCH',
+          reason: 'PREV_HASH_MISMATCH',
+          message: 'Previous hash mismatch'
+        };
       }
 
       const txs = await this.store.listSealedForBlock(b.index);
@@ -201,10 +214,23 @@ class MedusaChain {
         previousHash: b.previousHash,
         txHashes
       });
-      if (expected !== b.hash) return { valid: false, error: 'HASH_MISMATCH', at: b.index };
+      if (expected !== b.hash) {
+        return {
+          valid: false,
+          blocks: blocks.length,
+          block: b.index,
+          error: 'HASH_MISMATCH',
+          reason: 'Hash mismatch',
+          message: 'Hash mismatch'
+        };
+      }
     }
 
-    return { valid: true, blocks: blocks.length };
+    return {
+      valid: true,
+      blocks: blocks.length,
+      message: 'Ledger integrity verified'
+    };
   }
 }
 

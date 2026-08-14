@@ -10,7 +10,8 @@
   "scripts": {
     "start": "node packages/api/src/server.js",
     "dev": "node packages/api/src/server.js",
-    "test": "node --test packages/core/test/*.test.js"
+    "test": "node --test packages/core/test/*.test.js",
+    "medusa": "node bin/medusa.js"
   },
   "engines": {
     "node": ">=18"
