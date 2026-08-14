@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Medusa.Ledger</RootNamespace>
+    <AssemblyName>Medusa.Ledger</AssemblyName>
+    <Description>Medusa Ledger HTTP client stub — see README.md</Description>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>

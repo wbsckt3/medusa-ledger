@@ -1,6 +1,6 @@
 const http = require('http');
 const { URL } = require('url');
-const { MedusaChain, MemoryStore } = require('../../core');
+const { MedusaChain, MemoryStore, FileStore } = require('../../core');
 
 async function readJson(req) {
   const chunks = [];
@@ -112,10 +112,12 @@ function createServer(chain) {
 function main() {
   const port = Number(process.env.PORT || 8080);
   const autoSeal = String(process.env.MEDUSA_AUTO_SEAL_ON_EVENT || '1') !== '0';
-  const chain = new MedusaChain(new MemoryStore(), { autoSeal, ledgerId: 'oss-demo' });
+  const ledgerDir = String(process.env.MEDUSA_LEDGER_DIR || '').trim();
+  const store = ledgerDir ? new FileStore(ledgerDir) : new MemoryStore();
+  const chain = new MedusaChain(store, { autoSeal, ledgerId: ledgerDir || 'oss-demo' });
   const server = createServer(chain);
   server.listen(port, () => {
-    console.log(`[medusa-ledger] listening on :${port}`);
+    console.log(`[medusa-ledger] listening on :${port}${ledgerDir ? ` ledger=${ledgerDir}` : ' memory'}`);
   });
 }
 

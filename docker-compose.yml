@@ -6,3 +6,9 @@ services:
     environment:
       PORT: "8080"
       MEDUSA_AUTO_SEAL_ON_EVENT: "1"
+      MEDUSA_LEDGER_DIR: "/data/ledger"
+    volumes:
+      - medusa-ledger-data:/data/ledger
+
+volumes:
+  medusa-ledger-data:

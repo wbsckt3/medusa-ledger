@@ -31,6 +31,30 @@ eventId + eventType + payload
       VERIFY
 ```
 
+## Install anywhere
+
+| Stack | Install |
+|---|---|
+| Docker | `docker compose up --build` |
+| Node npm | `npm install @medusa-ledger/core` (or `file:packages/core` in monorepo) |
+| Spring Boot | Maven / Gradle HTTP client → sidecar (see `packages/spring/`) |
+| .NET | Stub roadmap (see `packages/dotnet/`) |
+
+Protocol: [`SPEC.md`](SPEC.md) · Storage guide: landing `storage.html`
+
+### Node embedded (FileStore)
+
+```js
+const { MedusaChain, FileStore } = require('@medusa-ledger/core');
+const chain = new MedusaChain(new FileStore('./ledger'), { autoSeal: true });
+await chain.appendEvent({
+  eventId: 'order-001',
+  eventType: 'ORDER_CREATED',
+  payload: { amount: 50000, currency: 'COP' }
+});
+console.log(await chain.verifyChain());
+```
+
 ## Quick start (Docker)
 
 ```bash
@@ -107,7 +131,7 @@ node packages/api/src/server.js
 
 | Package | Role |
 |---|---|
-| `@medusa-ledger/core` | Hash, chain engine, `MemoryStore`, pluggable `LedgerStore` |
+| `@medusa-ledger/core` | Hash, chain engine, `MemoryStore`, `FileStore`, pluggable `LedgerStore` |
 | `@medusa-ledger/api` | HTTP: events / verify / ledger/show / seal / blocks |
 | `@medusa-ledger/sdk` | Minimal JS client |
 | `bin/medusa.js` | CLI demo |
