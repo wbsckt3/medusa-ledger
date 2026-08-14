@@ -9,6 +9,7 @@
     "flow": "Event flow",
     "quickstart": "Quick start",
     "manual": "Manual",
+    "developers": "Developers",
     "github": "GitHub",
     "cloud": "Cloud product",
     "menu_open": "Open menu",
@@ -22,7 +23,8 @@
     "title": "Medusa Ledger — <em>Open Source Trust Ledger</em> for Business",
     "lead": "Append-only SHA-256 ledger so anyone can prove business events — without replacing your ERP.",
     "cta_github": "Star on GitHub",
-    "cta_manual": "Read the manual",
+    "cta_dev": "Developer guide",
+    "cta_manual": "API manual",
     "cta_cloud": "Medusa Cloud product",
     "b1": "SHA-256 · append-only",
     "b2": "Single ledger per instance",
@@ -37,15 +39,14 @@
     "cloud_text": "Multi-tenant / white-label, payment anchors, analytics hubs, SLA, ERP connectors, hosting."
   },
   "flow": {
-    "title": "Event flow",
-    "lead": "Business facts become verifiable proofs.",
-    "s1": "ORDER_CREATED",
-    "s2": "PAYMENT_AUTHORIZED",
-    "s3": "PAYMENT_CAPTURED",
-    "s4": "COMMISSION_CALCULATED",
-    "s5": "SETTLEMENT_CREATED",
-    "s6": "SHA-256 BLOCK",
-    "s7": "VERIFIABLE"
+    "title": "How an event becomes proof",
+    "lead": "You define the event. Medusa makes it verifiable.",
+    "s1": "YOUR APP",
+    "s2": "EVENT + payload",
+    "s3": "SHA-256",
+    "s4": "BLOCK",
+    "s5": "VERIFY",
+    "cta_dev": "Open developer guide"
   },
   "quickstart": {
     "title": "Quick start",
@@ -54,7 +55,7 @@
     "step2": "Start the stack",
     "step3": "Append an event",
     "step4": "Verify integrity",
-    "note": "Core v0.1 is on the main branch of this repo. Landing docs stay on gh-pages."
+    "note": "Core v0.1 is on the main branch. Demo matches docker compose + curl / CLI from the developer guide."
   },
   "manual_teaser": {
     "title": "Usage manual",

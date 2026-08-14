@@ -3,8 +3,12 @@
 Landing + usage manual for the **Medusa Ledger** open source library.
 
 - Site: https://wbsckt3.github.io/medusa-ledger/
-- Repo (code + this site on `gh-pages`): https://github.com/wbsckt3/medusa-ledger
+- Developer guide: https://wbsckt3.github.io/medusa-ledger/developers.html
+- Manual: https://wbsckt3.github.io/medusa-ledger/manual.html
+- Repo (code on `main`, site on `gh-pages`): https://github.com/wbsckt3/medusa-ledger
 - Commercial Cloud product: https://wbsckt3.github.io/medusa-ledger-business/
+
+Guide source: `BLOCKCHAIN/P2L n-1-n medusa ledger/3. Blockchain en flujo de negocio MEDUSA A GITHUB SPONSORS 2 OSS g.txt`
 
 ## Local preview
 

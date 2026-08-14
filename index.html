@@ -41,7 +41,10 @@
     .site-header.is-scrolled { border-color: var(--line); box-shadow: 0 8px 24px rgba(10,10,10,.06); }
     .site-header__inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.02em; }
-    .brand__logo { height: 44px; width: auto; border-radius: 10px; }
+    .brand__logo {
+      height: 44px; width: auto; border-radius: 10px;
+      background: #fff; padding: 4px;
+    }
     .brand__tag { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-700); }
     .nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
     .nav a { padding: 8px 10px; border-radius: 999px; font-size: .86rem; font-weight: 600; color: var(--muted); }
@@ -100,14 +103,13 @@
     }
     .hero__visual {
       display: grid; place-items: center; padding: 28px; border-radius: 28px; min-height: 300px;
-      background:
-        radial-gradient(circle at 30% 20%, rgba(125,211,252,.35), transparent 55%),
-        linear-gradient(160deg, #0a0a0a, #1e293b 55%, #334155);
+      background: #ffffff;
+      border: 1px solid var(--line);
       box-shadow: var(--shadow);
     }
     .hero__visual img {
       width: min(200px, 70%); border-radius: 24px; background: #fff; padding: 16px;
-      box-shadow: 0 16px 40px rgba(10,10,10,.35);
+      box-shadow: 0 10px 28px rgba(15,23,42,.08);
     }
 
     .section { padding: 72px 0; }
@@ -206,6 +208,7 @@
         <a href="#split" data-i18n="nav.core">Core vs Cloud</a>
         <a href="#flow" data-i18n="nav.flow">Event flow</a>
         <a href="#quickstart" data-i18n="nav.quickstart">Quick start</a>
+        <a href="developers.html" data-i18n="nav.developers">Developers</a>
         <a href="manual.html" data-i18n="nav.manual">Manual</a>
         <a href="https://github.com/wbsckt3/medusa-ledger" data-i18n="nav.github">GitHub</a>
         <a class="btn btn--primary nav-cta-mobile" href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="nav.cloud">Cloud product</a>
@@ -229,7 +232,8 @@
           <p class="hero__lead" data-i18n="hero.lead">Append-only SHA-256 ledger so anyone can prove business events — without replacing your ERP.</p>
           <div class="hero__ctas">
             <a class="btn btn--dark btn--lg" href="https://github.com/wbsckt3/medusa-ledger" data-i18n="hero.cta_github">Star on GitHub</a>
-            <a class="btn btn--primary btn--lg" href="manual.html" data-i18n="hero.cta_manual">Read the manual</a>
+            <a class="btn btn--primary btn--lg" href="developers.html" data-i18n="hero.cta_dev">Developer guide</a>
+            <a class="btn btn--outline btn--lg" href="manual.html" data-i18n="hero.cta_manual">API manual</a>
             <a class="btn btn--outline btn--lg" href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="hero.cta_cloud">Medusa Cloud product</a>
           </div>
           <div class="hero__badges">
@@ -266,18 +270,19 @@
     <section class="section" id="flow">
       <div class="container">
         <div class="section__head">
-          <h2 data-i18n="flow.title">Event flow</h2>
-          <p data-i18n="flow.lead">Business facts become verifiable proofs.</p>
+          <h2 data-i18n="flow.title">How an event becomes proof</h2>
+          <p data-i18n="flow.lead">You define the event. Medusa makes it verifiable.</p>
         </div>
-        <div class="flow">
-          <div class="flow__step"><span>1</span><div data-i18n="flow.s1">ORDER_CREATED</div></div>
-          <div class="flow__step"><span>2</span><div data-i18n="flow.s2">PAYMENT_AUTHORIZED</div></div>
-          <div class="flow__step"><span>3</span><div data-i18n="flow.s3">PAYMENT_CAPTURED</div></div>
-          <div class="flow__step"><span>4</span><div data-i18n="flow.s4">COMMISSION_CALCULATED</div></div>
-          <div class="flow__step"><span>5</span><div data-i18n="flow.s5">SETTLEMENT_CREATED</div></div>
-          <div class="flow__step"><span>6</span><div data-i18n="flow.s6">SHA-256 BLOCK</div></div>
-          <div class="flow__step"><span>7</span><div data-i18n="flow.s7">VERIFIABLE</div></div>
+        <div class="flow" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="flow__step"><span>1</span><div data-i18n="flow.s1">YOUR APP</div></div>
+          <div class="flow__step"><span>2</span><div data-i18n="flow.s2">EVENT + payload</div></div>
+          <div class="flow__step"><span>3</span><div data-i18n="flow.s3">SHA-256</div></div>
+          <div class="flow__step"><span>4</span><div data-i18n="flow.s4">BLOCK</div></div>
+          <div class="flow__step"><span>5</span><div data-i18n="flow.s5">VERIFY</div></div>
         </div>
+        <p style="text-align:center;margin:22px 0 0;">
+          <a class="btn btn--outline" href="developers.html" data-i18n="flow.cta_dev">Open developer guide</a>
+        </p>
       </div>
     </section>
 
@@ -295,17 +300,22 @@ cd medusa-ledger</pre>
           </div>
           <div class="step-doc">
             <h3 data-i18n="quickstart.step2">Start the stack</h3>
-            <pre class="code-block">docker compose up</pre>
+            <pre class="code-block">docker compose up --build</pre>
           </div>
           <div class="step-doc">
             <h3 data-i18n="quickstart.step3">Append an event</h3>
             <pre class="code-block">curl -X POST http://localhost:8080/api/events \
   -H "Content-Type: application/json" \
-  -d '{"eventId":"pay-1","eventType":"PAYMENT_CAPTURED","amount":50000}'</pre>
+  -d '{
+    "eventId": "order-001",
+    "eventType": "ORDER_CREATED",
+    "payload": { "customerId": "customer-42", "amount": 50000, "currency": "COP" }
+  }'</pre>
           </div>
           <div class="step-doc">
             <h3 data-i18n="quickstart.step4">Verify integrity</h3>
-            <pre class="code-block">curl http://localhost:8080/api/verify</pre>
+            <pre class="code-block">curl http://localhost:8080/api/verify
+curl http://localhost:8080/api/ledger/show</pre>
           </div>
         </div>
         <p class="note" data-i18n="quickstart.note">Core v0.1 is on the main branch of this repo. Landing docs stay on gh-pages.</p>
@@ -361,6 +371,7 @@ cd medusa-ledger</pre>
           <h4 data-i18n="footer.links">Links</h4>
           <ul>
             <li><a href="manual.html" data-i18n="footer.manual">Manual</a></li>
+            <li><a href="developers.html">Developer guide</a></li>
             <li><a href="https://github.com/wbsckt3/medusa-ledger" data-i18n="footer.github">Repository</a></li>
             <li><a href="https://wbsckt3.github.io/medusa-ledger-business/" data-i18n="footer.cloud">Cloud product</a></li>
           </ul>

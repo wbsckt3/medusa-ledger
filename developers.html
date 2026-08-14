@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Developer guide — Medusa Ledger OSS: events, Docker demo, verify, Core vs Cloud." />
+  <title>Developer guide — Medusa Ledger OSS</title>
+  <link rel="icon" href="assets/medusa-logo.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --ink:#0a0a0a; --muted:#475569; --accent:#c2410c; --line:#e2e8f0; --bg:#f8fafc; --code:#0a0a0a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Plus Jakarta Sans",system-ui,sans-serif; color:var(--ink); background:var(--bg); line-height:1.55; }
+    code, pre { font-family:"JetBrains Mono",ui-monospace,monospace; }
+    a { color:var(--accent); font-weight:600; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .toolbar { position:sticky; top:0; z-index:10; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; padding:12px 20px; background:#fff; border-bottom:1px solid var(--line); }
+    .toolbar__brand { display:flex; align-items:center; gap:10px; font-weight:800; color:var(--ink); text-decoration:none; }
+    .toolbar__brand img { width:32px; height:32px; border-radius:8px; background:#fff; }
+    .btn { display:inline-flex; padding:10px 16px; border-radius:12px; font-weight:700; font-size:.92rem; text-decoration:none; background:var(--accent); color:#fff !important; }
+    .btn--ghost { background:#fff; color:var(--ink) !important; border:1px solid var(--line); }
+    .wrap { width:min(860px, calc(100% - 32px)); margin:32px auto 64px; }
+    h1 { margin:0 0 8px; font-size:clamp(1.6rem,3vw,2.1rem); letter-spacing:-.02em; }
+    .lead { margin:0 0 24px; color:var(--muted); font-size:1.05rem; }
+    .hook { padding:18px 20px; border-radius:14px; background:#fff; border:1px solid var(--line); font-weight:700; font-size:1.08rem; margin-bottom:28px; }
+    h2 { margin:36px 0 12px; font-size:1.25rem; padding-top:8px; border-top:1px solid var(--line); }
+    p, li { color:var(--muted); }
+    pre { margin:12px 0; padding:14px 16px; border-radius:12px; background:var(--code); color:#e2e8f0; font-size:.84rem; overflow-x:auto; line-height:1.5; }
+    .diagram { white-space:pre; font-family:"JetBrains Mono",monospace; font-size:.82rem; background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; overflow-x:auto; color:#0f172a; }
+    .toc { padding:16px 18px; border-radius:14px; background:#fff; border:1px solid var(--line); margin-bottom:28px; }
+    .toc a { display:block; margin:4px 0; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <a class="toolbar__brand" href="index.html">
+      <img src="assets/medusa-logo.png" alt="" width="32" height="32" />
+      <span>Medusa Ledger · Developers</span>
+    </a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a class="btn btn--ghost" href="index.html">← Landing</a>
+      <a class="btn btn--ghost" href="manual.html">API manual</a>
+      <a class="btn" href="https://github.com/wbsckt3/medusa-ledger">GitHub</a>
+    </div>
+  </div>
+  <main class="wrap">
+    <h1>Developer guide</h1>
+    <p class="lead">The OSS demo does not simulate a commercial tenant. It shows one fundamental thing: how a system turns a business fact into verifiable, immutable evidence.</p>
+    <p class="hook">You define the event. Medusa makes it verifiable.</p>
+
+    <nav class="toc">
+      <strong style="color:var(--ink);display:block;margin-bottom:8px;">Contents</strong>
+      <a href="#event">1. What is an event?</a>
+      <a href="#docker">2. Docker demo</a>
+      <a href="#chain">3. See the chain</a>
+      <a href="#tamper">4. Detect tampering</a>
+      <a href="#domains">5. Any domain</a>
+      <a href="#split">6. Core vs Cloud</a>
+    </nav>
+
+    <h2 id="event">1. What is an event?</h2>
+    <p>An event is a fact that happened in a system and that you want to prove later was recorded exactly as stored. Medusa does not need to know what the event means.</p>
+    <div class="diagram">EVENT
+   │
+   ├── eventId
+   ├── eventType
+   ├── timestamp
+   ├── payload
+   └── metadata
+          ↓
+      HASH SHA-256
+          ↓
+        BLOCK
+          ↓
+       CHAIN</div>
+    <p>Medusa is not your business. Medusa says: this fact was registered this way, at this time, and the evidence was not altered.</p>
+
+    <h2 id="docker">2. Docker demo (no TukTuk, no ePayco, no ERP)</h2>
+<pre>git clone https://github.com/wbsckt3/medusa-ledger.git
+cd medusa-ledger
+docker compose up --build</pre>
+<pre>curl -X POST http://localhost:8080/api/events \
+  -H "Content-Type: application/json" \
+  -d '{
+    "eventId": "order-001",
+    "eventType": "ORDER_CREATED",
+    "payload": {
+      "customerId": "customer-42",
+      "amount": 50000,
+      "currency": "COP"
+    }
+  }'</pre>
+<pre>curl -X POST http://localhost:8080/api/events \
+  -H "Content-Type: application/json" \
+  -d '{
+    "eventId": "payment-001",
+    "eventType": "PAYMENT_RECEIVED",
+    "payload": {
+      "orderId": "order-001",
+      "amount": 50000,
+      "currency": "COP"
+    }
+  }'</pre>
+<pre>curl http://localhost:8080/api/verify</pre>
+    <p>Magic moment: <code>{"valid":true,"message":"Ledger integrity verified"}</code></p>
+    <p>CLI alternative:</p>
+<pre>node bin/medusa.js event create --type ORDER_CREATED --id order-002 --amount 12000
+node bin/medusa.js ledger verify
+node bin/medusa.js ledger show</pre>
+
+    <h2 id="chain">3. See the chain</h2>
+<pre>curl http://localhost:8080/api/ledger/show</pre>
+    <div class="diagram">YOUR APPLICATION
+       │  "Something happened"
+       ▼
+   MEDUSA CORE
+       │
+       ├── event
+       ├── timestamp
+       ├── payload
+       ▼
+    SHA-256 → BLOCK → LEDGER → VERIFY</div>
+
+    <h2 id="tamper">4. Detect tampering</h2>
+    <p>If someone changes a stored amount from 50000 to 90000, the block hash no longer matches. <code>/api/verify</code> returns <code>valid: false</code> with reason <code>Hash mismatch</code>. That is the second magic moment: not “I have blockchain”, but “I can detect that history was altered”.</p>
+
+    <h2 id="domains">5. Same Core, many domains</h2>
+    <ul>
+      <li>E-commerce: ORDER_CREATED, PAYMENT_RECEIVED, REFUND_CREATED</li>
+      <li>Logistics: PACKAGE_DISPATCHED, PACKAGE_DELIVERED</li>
+      <li>HR: CONTRACT_SIGNED, SALARY_PAID</li>
+      <li>SaaS: SUBSCRIPTION_CREATED, SUBSCRIPTION_CANCELLED</li>
+      <li>IoT: SENSOR_READING, DEVICE_MAINTENANCE</li>
+    </ul>
+    <p>Medusa does not need to know any of those domains. That is the value of the Core.</p>
+
+    <h2 id="split">6. Core vs Cloud</h2>
+    <div class="diagram">        MEDUSA CORE
+     "Make events verifiable"
+              │
+     ┌────────┴────────┐
+ Developer          Enterprise
+ Docker OSS         Medusa Cloud
+ Own events         Business events
+ Own ledger         Tenant ledger
+ CLI / API          Dashboard + WL + payments + ERP</div>
+    <p>Cloud product: <a href="https://wbsckt3.github.io/medusa-ledger-business/">medusa-ledger-business</a></p>
+  </main>
+</body>
+</html>
