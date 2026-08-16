@@ -7,13 +7,14 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/wbsckt3/medusa-ledger)](https://github.com/wbsckt3/medusa-ledger/releases)
 
+[![CI](https://github.com/wbsckt3/medusa-ledger/actions/workflows/ci.yml/badge.svg)](https://github.com/wbsckt3/medusa-ledger/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/wbsckt3/medusa-ledger)](https://github.com/wbsckt3/medusa-ledger/releases)
+
 **Open Source Trust Ledger for Business**
 
 Append-only SHA-256 ledger for verifiable business events.
 **You define the event. Medusa makes it verifiable.**
-
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Open Source](https://img.shields.io/badge/open--source-Apache--2.0-brightgreen.svg)](LICENSE)
 
 > Medusa does not replace your ERP.
 > Your operational database stores state. **Medusa stores evidence.**
